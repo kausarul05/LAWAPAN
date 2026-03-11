@@ -908,6 +908,97 @@ export const updateIssue = async (issueId, issueData) => {
 
 
 // ============================================
+// BIDS FUNCTIONS (for Transporter)
+// ============================================
+
+/**
+ * Get all available bids for transporters
+ */
+export const getAvailableBids = async (page = 1, limit = 8, searchTerm = '') => {
+  console.log('🔍 Fetching available bids...');
+
+  const url = `${API_ENDPOINTS.BID.GET_ALL}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
+
+  const response = await apiCall(
+    url,
+    'GET',
+    null,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Get bid details by ID
+ */
+export const getBidDetails = async (bidId) => {
+  console.log('🔍 Fetching bid details for ID:', bidId);
+
+  const response = await apiCall(
+    API_ENDPOINTS.BID.GET_BY_ID(bidId),
+    'GET',
+    null,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Place a bid on a shipment
+ */
+export const placeBid = async (bidData) => {
+  console.log('📝 Placing bid...');
+
+  const response = await apiCall(
+    API_ENDPOINTS.BID.PLACE,
+    'POST',
+    bidData,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Update a bid
+ */
+export const updateBid = async (bidId, bidData) => {
+  console.log('📝 Updating bid:', bidId);
+
+  const response = await apiCall(
+    API_ENDPOINTS.BID.UPDATE(bidId),
+    'PUT',
+    bidData,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Withdraw a bid
+ */
+export const withdrawBid = async (bidId) => {
+  console.log('🗑️ Withdrawing bid:', bidId);
+
+  const response = await apiCall(
+    API_ENDPOINTS.BID.WITHDRAW(bidId),
+    'DELETE',
+    null,
+    {},
+    false
+  );
+
+  return response;
+};
+
+// ============================================
 // OTHER AUTH FUNCTIONS
 // ============================================
 

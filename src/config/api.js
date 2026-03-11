@@ -1,7 +1,7 @@
 // ============================================
 // FILE: config/api.js  
 // Purpose: Centralized API Configuration & Endpoints
-// UPDATED: Added Shipment endpoints
+// UPDATED: Added Bid endpoints
 // ============================================
 
 const API_BASE_URL = "https://server.lawapantruck.com/api/v1";
@@ -51,6 +51,15 @@ export const API_ENDPOINTS = {
     CREATE: `${API_BASE_URL}/issues/`,
     UPDATE: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
     DELETE: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
+  },
+
+  // Bid Endpoints (for Transporter)
+  BID: {
+    GET_ALL: `${API_BASE_URL}/bid/`,
+    GET_BY_ID: (id) => `${API_BASE_URL}/bid/${id}`,
+    PLACE: `${API_BASE_URL}/bid/`,
+    UPDATE: (id) => `${API_BASE_URL}/bid/${id}`,
+    WITHDRAW: (id) => `${API_BASE_URL}/bid/${id}`,
   }
 };
 
