@@ -46,7 +46,7 @@ export const API_ENDPOINTS = {
 
   // Issues Endpoints
   ISSUES: {
-    GET_BY_SHIPMENT: (shipmentId) => `${API_BASE_URL}/issues/shipment/${shipmentId}`,
+    GET_BY_SHIPMENT: (shipmentId) => `${API_BASE_URL}/issues/shipper/${shipmentId}`,
     GET_BY_ID: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
     CREATE: `${API_BASE_URL}/issues/`,
     UPDATE: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
@@ -60,6 +60,12 @@ export const API_ENDPOINTS = {
     PLACE: `${API_BASE_URL}/bid/`,
     UPDATE: (id) => `${API_BASE_URL}/bid/${id}`,
     WITHDRAW: (id) => `${API_BASE_URL}/bid/${id}`,
+  },
+
+  // Stats Endpoints
+  STATS: {
+    SHIPPER: (shipperId) => `${API_BASE_URL}/stats/shipper/${shipperId}`,
+    TRANSPORTER: (transporterId) => `${API_BASE_URL}/stats/transporter/${transporterId}`,
   }
 };
 

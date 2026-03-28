@@ -1,30 +1,156 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ChevronLeft, 
   ChevronRight, 
-  Eye, 
-  Check, 
   MinusCircle,
   Search,
   Truck,
   ShieldCheck,
-  Globe
+  Globe,
+  Loader
 } from 'lucide-react';
+import { getAvailableBids } from '@/components/lib/apiClient';
 
 const BidsSection = () => {
-  const shipments = Array(5).fill({
-    title: "Ship 12 Pallets of Rice",
-    status: "Open",
-    image: "/shipment-sample.jpg" 
-  });
+  const [shipments, setShipments] = useState([]);
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedShipment, setSelectedShipment] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showAllBids, setShowAllBids] = useState(false);
 
-  const bids = Array(8).fill({
-    bidder: "Truck Lagbe",
-    price: "€150.00",
-    logo: "/truck-logo.png"
-  });
+  // Fetch all available bids
+  const fetchBids = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('🔍 Fetching available bids...');
+      
+      const response = await getAvailableBids(1, 100, '');
+      
+      console.log('📦 Bids response:', response);
+
+      if (response.success && response.data) {
+        // Transform shipments data
+        const transformedShipments = response.data.map(bid => ({
+          _id: bid._id,
+          title: bid.shipment_title,
+          status: bid.status,
+          image: bid.shipment_images?.[0] || '/shipment-sample.jpg',
+          pickup: bid.pickup_address,
+          delivery: bid.delivery_address,
+          price: bid.price,
+          weight: bid.weight,
+          packaging: bid.type_of_packaging
+        }));
+        
+        setShipments(transformedShipments);
+        
+        // If there are shipments, select the first one
+        if (transformedShipments.length > 0) {
+          setSelectedShipment(transformedShipments[0]);
+          // Set empty bids array - no mock data
+          setBids([]);
+        }
+      } else {
+        throw new Error(response.message || 'Failed to fetch bids');
+      }
+    } catch (err) {
+      console.error('Error fetching bids:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle next shipment
+  const handleNextShipment = () => {
+    if (shipments.length > 0) {
+      const nextIndex = (currentIndex + 1) % shipments.length;
+      setCurrentIndex(nextIndex);
+      setSelectedShipment(shipments[nextIndex]);
+      // Set empty bids array for the new shipment
+      setBids([]);
+    }
+  };
+
+  // Handle previous shipment
+  const handlePrevShipment = () => {
+    if (shipments.length > 0) {
+      const prevIndex = (currentIndex - 1 + shipments.length) % shipments.length;
+      setCurrentIndex(prevIndex);
+      setSelectedShipment(shipments[prevIndex]);
+      // Set empty bids array for the new shipment
+      setBids([]);
+    }
+  };
+
+  // Remove shipment
+  const handleRemoveShipment = (shipmentId) => {
+    if (window.confirm('Are you sure you want to remove this shipment?')) {
+      const updatedShipments = shipments.filter(s => s._id !== shipmentId);
+      setShipments(updatedShipments);
+      if (updatedShipments.length > 0) {
+        setSelectedShipment(updatedShipments[0]);
+        setCurrentIndex(0);
+        setBids([]);
+      } else {
+        setSelectedShipment(null);
+        setBids([]);
+      }
+    }
+  };
+
+  // View all bids modal
+  const handleViewAllBids = () => {
+    setShowAllBids(true);
+  };
+
+  // Format price
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
+  useEffect(() => {
+    fetchBids();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="p-6 bg-white min-h-screen font-sans flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="w-8 h-8 animate-spin text-[#036BB4] mx-auto mb-4" />
+          <p className="text-gray-600">Loading bids...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 bg-white min-h-screen font-sans">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
+          <div className="text-red-500 mb-4">⚠️</div>
+          <p className="text-gray-800 mb-4">{error}</p>
+          <button 
+            onClick={fetchBids}
+            className="px-4 py-2 bg-[#036BB4] text-white rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-white min-h-screen font-sans">
@@ -33,46 +159,88 @@ const BidsSection = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-gray-800">Live Bids & Assigned transporter</h2>
         <div className="flex gap-2">
-          
-          <button className="p-1 rounded-full border transition-colors" style={{borderColor: '#036BB4', color: '#036BB4'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f7ff'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+          <button 
+            onClick={handlePrevShipment}
+            disabled={shipments.length === 0}
+            className="p-1 rounded-full border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{borderColor: '#036BB4', color: '#036BB4'}} 
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f7ff'} 
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
             <ChevronLeft size={20} />
           </button>
-          <button className="p-1 rounded-full border transition-colors" style={{borderColor: '#036BB4', color: '#036BB4'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f7ff'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+          <button 
+            onClick={handleNextShipment}
+            disabled={shipments.length === 0}
+            className="p-1 rounded-full border transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{borderColor: '#036BB4', color: '#036BB4'}} 
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f7ff'} 
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
             <ChevronRight size={20} />
           </button>
         </div>
       </div>
+
       {/* 2. Horizontal Shipment Cards Slider */}
       <div className="flex gap-4 mb-8 overflow-x-auto pb-4 no-scrollbar">
-        {shipments.map((ship, idx) => (
-          <div key={idx} className="relative min-w-[220px] h-[130px] rounded-xl overflow-hidden shadow-md">
-            <div className="absolute inset-0 bg-gray-600">
-                <div className="w-full h-full opacity-60 bg-[url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=400')] bg-cover bg-center" />
+        {shipments.length > 0 ? (
+          shipments.map((ship, idx) => (
+            <div 
+              key={ship._id} 
+              className={`relative min-w-[220px] h-[130px] rounded-xl overflow-hidden shadow-md cursor-pointer transition-all ${
+                selectedShipment?._id === ship._id ? 'ring-2 ring-[#036BB4]' : ''
+              }`}
+              onClick={() => {
+                setSelectedShipment(ship);
+                setCurrentIndex(idx);
+                setBids([]);
+              }}
+            >
+              <div className="absolute inset-0 bg-gray-600">
+                <div className="w-full h-full opacity-60 bg-cover bg-center" style={{backgroundImage: `url(${ship.image})`}} />
+              </div>
+              
+              <div className="absolute top-2 left-2 right-2 flex justify-between">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveShipment(ship._id);
+                  }}
+                  className="bg-red-600 text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-1 cursor-pointer hover:bg-red-700 transition-colors"
+                >
+                  <MinusCircle size={10} /> Remove
+                </button>
+                <span className="bg-green-500 text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> {ship.status}
+                </span>
+              </div>
+              
+              <div className="absolute bottom-2 left-2 text-white text-sm font-semibold">
+                {ship.title.length > 25 ? ship.title.substring(0, 25) + '...' : ship.title}
+              </div>
             </div>
-            
-            <div className="absolute top-2 left-2 right-2 flex justify-between">
-              <span className="bg-red-600 text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-1 cursor-pointer hover:bg-red-700 transition-colors">
-                <MinusCircle size={10} /> Remove
-              </span>
-              <span className="bg-green-500 text-white text-[10px] px-2 py-1 rounded-full flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> Open
-              </span>
-            </div>
-            
-            <div className="absolute bottom-2 left-2 text-white text-sm font-semibold">
-              {ship.title}
-            </div>
+          ))
+        ) : (
+          <div className="w-full text-center py-8 text-gray-500">
+            No shipments available
           </div>
-        ))}
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* 3. Bids Table Section */}
         <div className="border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-          <div className="p-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="font-bold text-gray-800 text-lg">Bids</h3>
-            
+          <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="font-bold text-gray-800 text-lg">Bids for {selectedShipment?.title || 'Shipment'}</h3>
+            <button 
+              onClick={handleViewAllBids}
+              className="text-sm text-[#036BB4] hover:underline"
+              disabled={bids.length === 0}
+            >
+              View All
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -80,29 +248,36 @@ const BidsSection = () => {
                 <tr className="bg-[#036BB4] text-white text-sm">
                   <th className="py-3 px-6 font-semibold">Bidders</th>
                   <th className="py-3 px-6 font-semibold">Price</th>
-
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {bids.map((bid, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">              
-                    <td className="py-3 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden border border-gray-100" style={{backgroundColor: '#f0f7ff'}}>
-                           <span className="text-[10px] font-bold" style={{color: '#036BB4'}}>TL</span>
+                {bids.length > 0 ? (
+                  bids.slice(0, 5).map((bid, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50 transition-colors">              
+                      <td className="py-3 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden border border-gray-100" style={{backgroundColor: '#f0f7ff'}}>
+                            <span className="text-[10px] font-bold" style={{color: '#036BB4'}}>{bid.logo}</span>
+                          </div>
+                          <span className="text-gray-700 text-sm font-medium">{bid.bidder}</span>
                         </div>
-                        <span className="text-gray-700 text-sm font-medium">{bid.bidder}</span>
-                      </div>
+                      </td>
+                      <td className="py-3 px-6 text-sm text-gray-600 font-semibold">{bid.price}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="2" className="py-8 text-center text-gray-500">
+                      No bids available for this shipment
                     </td>
-                    <td className="py-3 px-6 text-sm text-gray-600 font-semibold">{bid.price}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* 4. RE-DESIGNED: Assigned Transporter Placeholder Section */}
+        {/* 4. Assigned Transporter Placeholder Section */}
         <div className="relative border border-gray-100 rounded-2xl p-8 flex flex-col items-center justify-center text-center shadow-xl bg-gradient-to-b from-white to-blue-50/30 overflow-hidden min-h-[400px]">
           
           {/* Animated Background Radar Effect */}
@@ -140,13 +315,58 @@ const BidsSection = () => {
             
             {/* Animated Loading Dots */}
             <div className="flex gap-1.5 justify-center mt-6">
-               <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.3s]" style={{backgroundColor: '#036BB4'}} />
-               <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.15s]" style={{backgroundColor: '#036BB4'}} />
-               <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: '#036BB4'}} />
+              <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.3s]" style={{backgroundColor: '#036BB4'}} />
+              <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.15s]" style={{backgroundColor: '#036BB4'}} />
+              <div className="w-2 h-2 rounded-full animate-bounce" style={{backgroundColor: '#036BB4'}} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* View All Bids Modal */}
+      {showAllBids && bids.length > 0 && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setShowAllBids(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto shadow-xl">
+              <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 className="text-xl font-bold text-gray-800">All Bids</h3>
+                <button 
+                  onClick={() => setShowAllBids(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-6">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="py-3 px-4 font-semibold text-sm">Bidder</th>
+                      <th className="py-3 px-4 font-semibold text-sm">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bids.map((bid, idx) => (
+                      <tr key={idx} className="border-b border-gray-100">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{backgroundColor: '#f0f7ff'}}>
+                              <span className="text-xs font-bold" style={{color: '#036BB4'}}>{bid.logo}</span>
+                            </div>
+                            <span className="text-gray-700">{bid.bidder}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-gray-800">{bid.price}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <style jsx>{`
         .no-scrollbar::-webkit-scrollbar {

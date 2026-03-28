@@ -906,6 +906,43 @@ export const updateIssue = async (issueId, issueData) => {
   return response;
 };
 
+// ============================================
+// STATS FUNCTIONS
+// ============================================
+
+/**
+ * Get shipper dashboard stats
+ */
+export const getShipperStats = async (shipperId) => {
+  console.log('📊 Fetching stats for shipper:', shipperId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.STATS.SHIPPER(shipperId),
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Get transporter dashboard stats
+ */
+export const getTransporterStats = async (transporterId) => {
+  console.log('📊 Fetching stats for transporter:', transporterId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.STATS.TRANSPORTER(transporterId),
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
 
 // ============================================
 // BIDS FUNCTIONS (for Transporter)
@@ -935,7 +972,7 @@ export const getAvailableBids = async (page = 1, limit = 8, searchTerm = '') => 
  */
 export const getBidDetails = async (bidId) => {
   console.log('🔍 Fetching bid details for ID:', bidId);
-
+  
   const response = await apiCall(
     API_ENDPOINTS.BID.GET_BY_ID(bidId),
     'GET',
@@ -943,7 +980,7 @@ export const getBidDetails = async (bidId) => {
     {},
     false
   );
-
+  
   return response;
 };
 
@@ -1054,6 +1091,7 @@ export const getUserRole = () => {
   }
   return null;
 };
+
 
 // ============================================
 // DEFAULT EXPORT
