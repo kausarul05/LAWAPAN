@@ -189,9 +189,9 @@ const AvailableBidsPage = () => {
                                     className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
                                 >
                                     <div className="relative h-40">
-                                        <Image
-                                            src={getFirstImage(bid.shipment_images)}
-                                            alt={bid.shipment_title}
+                                        <img
+                                            src={getFirstImage(bid?.shipment_images)}
+                                            alt={bid?.shipment_title}
                                             fill
                                             className="object-cover"
                                             onError={(e) => {

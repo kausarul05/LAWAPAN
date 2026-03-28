@@ -72,7 +72,7 @@ export default function EarningsOverview() {
             </tr>
           </thead>
           <tbody className="bg-white">
-            {transactions.map((row) => (
+            {transactions?.map((row) => (
               <tr key={row.id} className="border-b border-gray-400 hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 text-sm text-gray-600">{row.id}</td>
                 <td className="px-6 py-4">

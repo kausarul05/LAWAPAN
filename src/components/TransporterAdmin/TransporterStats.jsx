@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, Loader } from 'lucide-react';
+import { getTransporterStats } from '@/components/lib/apiClient';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -49,29 +50,108 @@ const MonthDropdown = ({ month, setMonth, show, setShow }) => (
 );
 
 const TransporterStats = () => {
-  const [progressMonth, setProgressMonth] = useState('January');
-  const [completedMonth, setCompletedMonth] = useState('January');
-  const [earningsMonth, setEarningsMonth] = useState('January');
+  const [progressMonth, setProgressMonth] = useState('March');
+  const [completedMonth, setCompletedMonth] = useState('March');
+  const [earningsMonth, setEarningsMonth] = useState('March');
   
   const [showProgressDropdown, setShowProgressDropdown] = useState(false);
   const [showCompletedDropdown, setShowCompletedDropdown] = useState(false);
   const [showEarningsDropdown, setShowEarningsDropdown] = useState(false);
+  
+  const [stats, setStats] = useState({
+    shipmentsInProgress: 0,
+    completedShipments: 0,
+    totalEarnings: 0,
+    selectedMonth: { month: 'March', year: 2026 }
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sample data for different months
-  const statsData = {
-    'January': { progress: 4, completed: 20, earnings: 200 },
-    'February': { progress: 6, completed: 18, earnings: 250 },
-    'March': { progress: 3, completed: 22, earnings: 280 },
-    'April': { progress: 5, completed: 19, earnings: 220 },
-    'May': { progress: 7, completed: 25, earnings: 300 },
-    'June': { progress: 4, completed: 21, earnings: 240 },
-    'July': { progress: 8, completed: 23, earnings: 290 },
-    'August': { progress: 5, completed: 20, earnings: 260 },
-    'September': { progress: 6, completed: 24, earnings: 270 },
-    'October': { progress: 4, completed: 22, earnings: 230 },
-    'November': { progress: 7, completed: 26, earnings: 310 },
-    'December': { progress: 5, completed: 21, earnings: 250 }
+  // Get transporter ID from localStorage
+  const getTransporterId = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('transporter_id');
+    }
+    return null;
   };
+
+  // Fetch stats
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const transporterId = getTransporterId();
+      if (!transporterId) {
+        throw new Error('Transporter ID not found. Please login again.');
+      }
+      
+      console.log('🔍 Fetching stats for transporter:', transporterId);
+      
+      const response = await getTransporterStats(transporterId);
+      
+      console.log('📦 Stats response:', response);
+
+      if (response.success && response.data) {
+        setStats({
+          shipmentsInProgress: response.data.shipmentsInProgress || 0,
+          completedShipments: response.data.completedShipments || 0,
+          totalEarnings: response.data.totalEarnings || 0,
+          selectedMonth: response.data.selectedMonth || { month: 'March', year: 2026 }
+        });
+        
+        // Update months based on API response
+        const apiMonth = response.data.selectedMonth?.month || 'March';
+        setProgressMonth(apiMonth);
+        setCompletedMonth(apiMonth);
+        setEarningsMonth(apiMonth);
+      } else {
+        throw new Error(response.message || 'Failed to fetch stats');
+      }
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      setError(err.message);
+      
+      // If unauthorized, redirect to login
+      if (err.message.includes('Session expired') || err.message.includes('401')) {
+        window.location.href = '/login';
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load stats on component mount
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex gap-5 p-6 bg-gray-50">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex-1 min-w-[280px] flex items-center justify-center">
+          <Loader className="w-6 h-6 animate-spin text-[#036BB4]" />
+          <span className="ml-2 text-gray-600">Loading stats...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex gap-5 p-6 bg-gray-50">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex-1 min-w-[280px] text-center">
+          <p className="text-red-500 mb-2">⚠️ {error}</p>
+          <button 
+            onClick={fetchStats}
+            className="px-4 py-2 bg-[#036BB4] text-white rounded-lg text-sm hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex gap-5 p-6 bg-gray-50">
@@ -86,7 +166,7 @@ const TransporterStats = () => {
             setShow={setShowProgressDropdown}
           />
         </div>
-        <p className="text-4xl font-bold text-gray-900">{statsData[progressMonth].progress}</p>
+        <p className="text-4xl font-bold text-gray-900">{stats.shipmentsInProgress}</p>
       </div>
 
       {/* Completed shipments */}
@@ -100,7 +180,7 @@ const TransporterStats = () => {
             setShow={setShowCompletedDropdown}
           />
         </div>
-        <p className="text-4xl font-bold text-gray-900">{statsData[completedMonth].completed}</p>
+        <p className="text-4xl font-bold text-gray-900">{stats.completedShipments}</p>
       </div>
 
       {/* Total Earnings */}
@@ -114,7 +194,7 @@ const TransporterStats = () => {
             setShow={setShowEarningsDropdown}
           />
         </div>
-        <p className="text-4xl font-bold text-gray-900">{statsData[earningsMonth].earnings}</p>
+        <p className="text-4xl font-bold text-gray-900">${stats.totalEarnings.toLocaleString()}</p>
       </div>
     </div>
   );
