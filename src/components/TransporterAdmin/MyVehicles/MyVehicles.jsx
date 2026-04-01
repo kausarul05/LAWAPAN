@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader } from 'lucide-react';
-import { getTransporterVehicles, deleteVehicle } from '@/components/lib/apiClient';
+import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader, X, Upload } from 'lucide-react';
+import { getTransporterVehicles, deleteVehicle, createVehicle } from '@/components/lib/apiClient';
 
 export default function MyVehicles() {
   const router = useRouter();
@@ -20,6 +20,26 @@ export default function MyVehicles() {
     totalPage: 0
   });
   const [deletingId, setDeletingId] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    vehicle_number: '',
+    plate_number: '',
+    vehicle_type: '',
+    capacity: '',
+    year_model: '',
+    plate_id: null,
+    insurance: null,
+    technical_visit: null,
+    vehicle_images: null
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [previews, setPreviews] = useState({
+    plate_id: null,
+    insurance: null,
+    technical_visit: null,
+    vehicle_images: null
+  });
 
   // Get transporter ID from localStorage
   const getTransporterId = () => {
@@ -47,7 +67,6 @@ export default function MyVehicles() {
       console.log('📦 Vehicles response:', response);
 
       if (response.success) {
-        // Transform the API response to match your component structure
         const transformedVehicles = response.data.vehicles.map(vehicle => ({
           id: vehicle._id,
           name: `${vehicle.vehicle_type} - ${vehicle.capicity}T`,
@@ -77,7 +96,6 @@ export default function MyVehicles() {
       console.error('Error fetching vehicles:', err);
       setError(err.message);
       
-      // If unauthorized, redirect to login
       if (err.message.includes('Session expired') || err.message.includes('401')) {
         router.push('/login');
       }
@@ -102,7 +120,6 @@ export default function MyVehicles() {
       console.log('✅ Delete response:', response);
 
       if (response.success) {
-        // Refresh the vehicles list
         fetchVehicles(currentPage, searchTerm);
       } else {
         throw new Error(response.message || 'Failed to delete vehicle');
@@ -112,6 +129,122 @@ export default function MyVehicles() {
       alert(err.message || 'Failed to delete vehicle. Please try again.');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  // Handle form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  // Handle file upload
+  const handleFileChange = (e, fieldName) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, [fieldName]: file }));
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviews(prev => ({ ...prev, [fieldName]: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Remove file
+  const removeFile = (fieldName) => {
+    setFormData(prev => ({ ...prev, [fieldName]: null }));
+    setPreviews(prev => ({ ...prev, [fieldName]: null }));
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.vehicle_number) errors.vehicle_number = 'Vehicle number is required';
+    if (!formData.plate_number) errors.plate_number = 'Plate number is required';
+    if (!formData.vehicle_type) errors.vehicle_type = 'Vehicle type is required';
+    if (!formData.capacity) errors.capacity = 'Capacity is required';
+    if (!formData.year_model) errors.year_model = 'Year model is required';
+    if (!formData.plate_id) errors.plate_id = 'Plate ID document is required';
+    if (!formData.insurance) errors.insurance = 'Insurance document is required';
+    if (!formData.technical_visit) errors.technical_visit = 'Technical visit document is required';
+    if (!formData.vehicle_images) errors.vehicle_images = 'Vehicle image is required';
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      vehicle_number: '',
+      plate_number: '',
+      vehicle_type: '',
+      capacity: '',
+      year_model: '',
+      plate_id: null,
+      insurance: null,
+      technical_visit: null,
+      vehicle_images: null
+    });
+    setPreviews({
+      plate_id: null,
+      insurance: null,
+      technical_visit: null,
+      vehicle_images: null
+    });
+    setFormErrors({});
+  };
+
+  // Handle add vehicle
+  const handleAddVehicle = async () => {
+    if (!validateForm()) return;
+
+    try {
+      setSubmitting(true);
+      
+      const transporterId = getTransporterId();
+      if (!transporterId) {
+        throw new Error('Transporter ID not found. Please login again.');
+      }
+
+      // Create FormData for API
+      const submitFormData = new FormData();
+      submitFormData.append('transporter_id', transporterId);
+      submitFormData.append('vehicle_number', formData.vehicle_number);
+      submitFormData.append('plate_number', formData.plate_number);
+      submitFormData.append('vehicle_type', formData.vehicle_type);
+      submitFormData.append('capicity', formData.capacity);
+      submitFormData.append('year_model', formData.year_model);
+      submitFormData.append('plate_id', formData.plate_id);
+      submitFormData.append('insurance', formData.insurance);
+      submitFormData.append('technical_visit', formData.technical_visit);
+      submitFormData.append('vehicle_images', formData.vehicle_images);
+
+      console.log('🚛 Creating new vehicle...');
+      
+      const response = await createVehicle(submitFormData);
+      
+      console.log('✅ Create vehicle response:', response);
+
+      if (response.success) {
+        alert('Vehicle added successfully!');
+        setShowAddModal(false);
+        resetForm();
+        fetchVehicles(currentPage, searchTerm);
+      } else {
+        throw new Error(response.message || 'Failed to add vehicle');
+      }
+    } catch (err) {
+      console.error('Error adding vehicle:', err);
+      alert(err.message || 'Failed to add vehicle. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -175,7 +308,7 @@ export default function MyVehicles() {
     if (vehicle.vehicle_images && vehicle.vehicle_images.length > 0) {
       return vehicle.vehicle_images[0];
     }
-    return 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
+    // return 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
   };
 
   if (loading && vehicles.length === 0) {
@@ -216,7 +349,7 @@ export default function MyVehicles() {
         
         <div className="flex gap-3 w-full md:w-auto">
           <button 
-            onClick={() => router.push('/dashboard/Transporter/my-vehicles/add')}
+            onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 bg-blue-50 text-[#036BB4] px-4 py-2 rounded-xl font-bold hover:bg-blue-100 transition"
           >
             <Plus size={18} /> Add Vehicle
@@ -250,9 +383,9 @@ export default function MyVehicles() {
                     src={getVehicleImage(v)} 
                     alt={v.name} 
                     className="w-full h-32 object-contain group-hover:scale-105 transition duration-300"
-                    onError={(e) => {
-                      e.target.src = 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
-                    }}
+                    // onError={(e) => {
+                    //   e.target.src = 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
+                    // }}
                   />
                 </div>
                 <h3 className="font-bold text-gray-800 text-sm text-center line-clamp-1">{v.name}</h3>
@@ -340,12 +473,272 @@ export default function MyVehicles() {
             {searchTerm ? 'No vehicles found matching your search.' : 'No vehicles added yet.'}
           </p>
           <button 
-            onClick={() => router.push('/dashboard/Transporter/my-vehicles/add')}
+            onClick={() => setShowAddModal(true)}
             className="mt-4 px-4 py-2 bg-[#036BB4] text-white rounded-lg hover:bg-blue-700 inline-flex items-center gap-2"
           >
             <Plus size={16} /> Add Your First Vehicle
           </button>
         </div>
+      )}
+
+      {/* Add Vehicle Modal */}
+      {showAddModal && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setShowAddModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-xl">
+              <div className="p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+                <h2 className="text-xl font-bold text-gray-900">Add New Vehicle</h2>
+                <button 
+                  onClick={() => setShowAddModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vehicle Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="vehicle_number"
+                      value={formData.vehicle_number}
+                      onChange={handleInputChange}
+                      placeholder="Enter vehicle number"
+                      className={`w-full px-4 py-3 border text-black ${formErrors.vehicle_number ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#036BB4]`}
+                    />
+                    {formErrors.vehicle_number && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.vehicle_number}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Plate Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="plate_number"
+                      value={formData.plate_number}
+                      onChange={handleInputChange}
+                      placeholder="Enter plate number"
+                      className={`w-full px-4 py-3 border text-black ${formErrors.plate_number ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#036BB4]`}
+                    />
+                    {formErrors.plate_number && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.plate_number}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vehicle Type <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="vehicle_type"
+                      value={formData.vehicle_type}
+                      onChange={handleInputChange}
+                      placeholder="e.g., Truck, Van, Trailer"
+                      className={`w-full px-4 py-3 border text-black ${formErrors.vehicle_type ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#036BB4]`}
+                    />
+                    {formErrors.vehicle_type && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.vehicle_type}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Capacity (Tons) <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="capacity"
+                      value={formData.capacity}
+                      onChange={handleInputChange}
+                      placeholder="Enter capacity in tons"
+                      className={`w-full px-4 py-3 border text-black ${formErrors.capacity ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#036BB4]`}
+                    />
+                    {formErrors.capacity && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.capacity}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Year Model <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="year_model"
+                      value={formData.year_model}
+                      onChange={handleInputChange}
+                      placeholder="e.g., 2022"
+                      className={`w-full px-4 py-3 border text-black ${formErrors.year_model ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#036BB4]`}
+                    />
+                    {formErrors.year_model && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.year_model}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* File Uploads */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Plate ID */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Plate ID Document <span className="text-red-500">*</span>
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#036BB4] transition">
+                      <input
+                        type="file"
+                        id="plate_id"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'plate_id')}
+                        className="hidden"
+                      />
+                      <label htmlFor="plate_id" className="cursor-pointer flex flex-col items-center">
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-600">Click to upload Plate ID</span>
+                      </label>
+                    </div>
+                    {previews.plate_id && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={previews.plate_id} alt="Plate ID Preview" className="w-20 h-20 object-cover rounded-lg border" />
+                        <button onClick={() => removeFile('plate_id')} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                    {formErrors.plate_id && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.plate_id}</p>
+                    )}
+                  </div>
+
+                  {/* Insurance */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Insurance Document <span className="text-red-500">*</span>
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#036BB4] transition">
+                      <input
+                        type="file"
+                        id="insurance"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'insurance')}
+                        className="hidden"
+                      />
+                      <label htmlFor="insurance" className="cursor-pointer flex flex-col items-center">
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-600">Click to upload Insurance</span>
+                      </label>
+                    </div>
+                    {previews.insurance && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={previews.insurance} alt="Insurance Preview" className="w-20 h-20 object-cover rounded-lg border" />
+                        <button onClick={() => removeFile('insurance')} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                    {formErrors.insurance && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.insurance}</p>
+                    )}
+                  </div>
+
+                  {/* Technical Visit */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Technical Visit Document <span className="text-red-500">*</span>
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#036BB4] transition">
+                      <input
+                        type="file"
+                        id="technical_visit"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'technical_visit')}
+                        className="hidden"
+                      />
+                      <label htmlFor="technical_visit" className="cursor-pointer flex flex-col items-center">
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-600">Click to upload Technical Visit</span>
+                      </label>
+                    </div>
+                    {previews.technical_visit && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={previews.technical_visit} alt="Technical Visit Preview" className="w-20 h-20 object-cover rounded-lg border" />
+                        <button onClick={() => removeFile('technical_visit')} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                    {formErrors.technical_visit && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.technical_visit}</p>
+                    )}
+                  </div>
+
+                  {/* Vehicle Images */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vehicle Image <span className="text-red-500">*</span>
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#036BB4] transition">
+                      <input
+                        type="file"
+                        id="vehicle_images"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'vehicle_images')}
+                        className="hidden"
+                      />
+                      <label htmlFor="vehicle_images" className="cursor-pointer flex flex-col items-center">
+                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-600">Click to upload Vehicle Image</span>
+                      </label>
+                    </div>
+                    {previews.vehicle_images && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={previews.vehicle_images} alt="Vehicle Preview" className="w-20 h-20 object-cover rounded-lg border" />
+                        <button onClick={() => removeFile('vehicle_images')} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                    {formErrors.vehicle_images && (
+                      <p className="text-red-500 text-xs mt-1">{formErrors.vehicle_images}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddVehicle}
+                  disabled={submitting}
+                  className="px-4 py-2 bg-[#036BB4] text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Adding...
+                    </>
+                  ) : (
+                    'Add Vehicle'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

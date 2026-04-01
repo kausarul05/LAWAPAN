@@ -858,7 +858,7 @@ export const updateVehicle = async (vehicleId, formData) => {
   
   const response = await apiCall(
     API_ENDPOINTS.VEHICLE.UPDATE(vehicleId),
-    'PUT',
+    'PATCH',
     formData,
     {},
     true // isFormData = true for file uploads
