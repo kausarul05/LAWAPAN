@@ -975,6 +975,8 @@ export const deleteDriver = async (driverId) => {
   return response;
 };
 
+
+
 // ============================================
 // LOGOUT FUNCTION
 // ============================================
@@ -1250,6 +1252,97 @@ export const withdrawBid = async (bidId) => {
 
   return response;
 };
+
+// ============================================
+// ISSUES FUNCTIONS (for Transporter)
+// ============================================
+
+/**
+ * Get all issues for a transporter
+ */
+export const getTransporterIssues = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
+  console.log('📋 Fetching issues for transporter:', transporterId);
+  
+  const url = `${API_ENDPOINTS.ISSUES.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
+  
+  const response = await apiCall(
+    url,
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Create a new issue
+ */
+// export const createIssue = async (issueData) => {
+//   console.log('📝 Creating new issue:', issueData);
+  
+//   const response = await apiCall(
+//     API_ENDPOINTS.ISSUES.CREATE,
+//     'POST',
+//     issueData,
+//     {},
+//     false
+//   );
+  
+//   return response;
+// };
+
+/**
+ * Get issue details by ID
+ */
+// export const getIssueDetails = async (issueId) => {
+//   console.log('🔍 Fetching issue details for ID:', issueId);
+  
+//   const response = await apiCall(
+//     API_ENDPOINTS.ISSUES.GET_BY_ID(issueId),
+//     'GET',
+//     null,
+//     {},
+//     false
+//   );
+  
+//   return response;
+// };
+
+/**
+ * Update an issue
+ */
+// export const updateIssue = async (issueId, issueData) => {
+//   console.log('📝 Updating issue:', issueId);
+  
+//   const response = await apiCall(
+//     API_ENDPOINTS.ISSUES.UPDATE(issueId),
+//     'PUT',
+//     issueData,
+//     {},
+//     false
+//   );
+  
+//   return response;
+// };
+
+/**
+ * Delete an issue
+ */
+// export const deleteIssue = async (issueId) => {
+//   console.log('🗑️ Deleting issue:', issueId);
+  
+//   const response = await apiCall(
+//     API_ENDPOINTS.ISSUES.DELETE(issueId),
+//     'DELETE',
+//     null,
+//     {},
+//     false
+//   );
+  
+//   return response;
+// };
 
 // ============================================
 // OTHER AUTH FUNCTIONS

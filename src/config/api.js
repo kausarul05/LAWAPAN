@@ -48,6 +48,7 @@ export const API_ENDPOINTS = {
   // Issues Endpoints
   ISSUES: {
     GET_BY_SHIPMENT: (shipmentId) => `${API_BASE_URL}/issues/shipper/${shipmentId}`,
+     GET_BY_TRANSPORTER: (transporterId) => `${API_BASE_URL}/issues/transporter/${transporterId}`,
     GET_BY_ID: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
     CREATE: `${API_BASE_URL}/issues/`,
     UPDATE: (issueId) => `${API_BASE_URL}/issues/${issueId}`,
