@@ -885,6 +885,97 @@ export const deleteVehicle = async (vehicleId) => {
 };
 
 // ============================================
+// DRIVER FUNCTIONS (for Transporter)
+// ============================================
+
+/**
+ * Get all drivers for a transporter
+ */
+export const getTransporterDrivers = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
+  console.log('👤 Fetching drivers for transporter:', transporterId);
+  
+  const url = `${API_ENDPOINTS.DRIVER.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
+  
+  const response = await apiCall(
+    url,
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Get driver details by ID
+ */
+export const getDriverDetails = async (driverId) => {
+  console.log('🔍 Fetching driver details for ID:', driverId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.DRIVER.GET_BY_ID(driverId),
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Create a new driver
+ */
+export const createDriver = async (formData) => {
+  console.log('👤 Creating new driver');
+  
+  const response = await apiCall(
+    API_ENDPOINTS.DRIVER.CREATE,
+    'POST',
+    formData,
+    {},
+    true // isFormData = true for file uploads
+  );
+  
+  return response;
+};
+
+/**
+ * Update a driver
+ */
+export const updateDriver = async (driverId, formData) => {
+  console.log('📝 Updating driver:', driverId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.DRIVER.UPDATE(driverId),
+    'PUT',
+    formData,
+    {},
+    true // isFormData = true for file uploads
+  );
+  
+  return response;
+};
+
+/**
+ * Delete a driver
+ */
+export const deleteDriver = async (driverId) => {
+  console.log('🗑️ Deleting driver:', driverId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.DRIVER.DELETE(driverId),
+    'DELETE',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+// ============================================
 // LOGOUT FUNCTION
 // ============================================
 

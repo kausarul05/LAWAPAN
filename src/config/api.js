@@ -76,6 +76,15 @@ export const API_ENDPOINTS = {
     CREATE: `${API_BASE_URL}/vehicle/`,
     UPDATE: (id) => `${API_BASE_URL}/vehicle/${id}`,
     DELETE: (id) => `${API_BASE_URL}/vehicle/${id}`,
+  },
+
+  // Driver Endpoints (for Transporter)
+  DRIVER: {
+    GET_BY_TRANSPORTER: (transporterId) => `${API_BASE_URL}/driver/transporter/${transporterId}`,
+    GET_BY_ID: (id) => `${API_BASE_URL}/driver/${id}`,
+    CREATE: `${API_BASE_URL}/driver/`,
+    UPDATE: (id) => `${API_BASE_URL}/driver/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/driver/${id}`,
   }
 };
 
