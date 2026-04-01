@@ -769,6 +769,31 @@ export const trackShipment = async (shipmentId) => {
 };
 
 // ============================================
+// SHIPMENT FUNCTIONS (for Transporter)
+// ============================================
+
+/**
+ * Get shipments assigned to a transporter
+ */
+export const getTransporterShipments = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
+  console.log('📦 Fetching shipments for transporter:', transporterId);
+
+  const response = await apiCall(
+    API_ENDPOINTS.SHIPMENT.GET_TRANSPORTER_SHIPMENTS(transporterId),
+    'GET',
+    null,
+    {},
+    false
+  );
+
+  return response;
+};
+
+// ============================================
+// VEHICLE FUNCTIONS (for Transporter)
+// ============================================
+
+// ============================================
 // VEHICLE FUNCTIONS (for Transporter)
 // ============================================
 
