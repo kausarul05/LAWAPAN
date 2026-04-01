@@ -38,7 +38,7 @@ export default function EarningsOverview() {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-800">Earnings Overview</h1>
-        <div className="flex  rounded-lg overflow-hidden bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div className="flex  overflow-hidden bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="flex items-center px-3 text-gray-600">
             <Search size={18} />
             <input type="text" placeholder="Search" className="ml-2 outline-none py-2 text-sm " />

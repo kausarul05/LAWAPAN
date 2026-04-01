@@ -769,6 +769,97 @@ export const trackShipment = async (shipmentId) => {
 };
 
 // ============================================
+// VEHICLE FUNCTIONS (for Transporter)
+// ============================================
+
+/**
+ * Get all vehicles for a transporter
+ */
+export const getTransporterVehicles = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
+  console.log('🚛 Fetching vehicles for transporter:', transporterId);
+  
+  const url = `${API_ENDPOINTS.VEHICLE.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
+  
+  const response = await apiCall(
+    url,
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Get vehicle details by ID
+ */
+export const getVehicleDetails = async (vehicleId) => {
+  console.log('🔍 Fetching vehicle details for ID:', vehicleId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.VEHICLE.GET_BY_ID(vehicleId),
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Create a new vehicle
+ */
+export const createVehicle = async (formData) => {
+  console.log('🚛 Creating new vehicle');
+  
+  const response = await apiCall(
+    API_ENDPOINTS.VEHICLE.CREATE,
+    'POST',
+    formData,
+    {},
+    true // isFormData = true for file uploads
+  );
+  
+  return response;
+};
+
+/**
+ * Update a vehicle
+ */
+export const updateVehicle = async (vehicleId, formData) => {
+  console.log('📝 Updating vehicle:', vehicleId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.VEHICLE.UPDATE(vehicleId),
+    'PUT',
+    formData,
+    {},
+    true // isFormData = true for file uploads
+  );
+  
+  return response;
+};
+
+/**
+ * Delete a vehicle
+ */
+export const deleteVehicle = async (vehicleId) => {
+  console.log('🗑️ Deleting vehicle:', vehicleId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.VEHICLE.DELETE(vehicleId),
+    'DELETE',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+// ============================================
 // LOGOUT FUNCTION
 // ============================================
 
@@ -915,7 +1006,7 @@ export const updateIssue = async (issueId, issueData) => {
  */
 export const getShipperStats = async (shipperId) => {
   console.log('📊 Fetching stats for shipper:', shipperId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.STATS.SHIPPER(shipperId),
     'GET',
@@ -923,7 +1014,7 @@ export const getShipperStats = async (shipperId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -932,7 +1023,7 @@ export const getShipperStats = async (shipperId) => {
  */
 export const getTransporterStats = async (transporterId) => {
   console.log('📊 Fetching stats for transporter:', transporterId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.STATS.TRANSPORTER(transporterId),
     'GET',
@@ -940,7 +1031,7 @@ export const getTransporterStats = async (transporterId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -972,7 +1063,7 @@ export const getAvailableBids = async (page = 1, limit = 8, searchTerm = '') => 
  */
 export const getBidDetails = async (bidId) => {
   console.log('🔍 Fetching bid details for ID:', bidId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.BID.GET_BY_ID(bidId),
     'GET',
@@ -980,7 +1071,7 @@ export const getBidDetails = async (bidId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -988,7 +1079,16 @@ export const getBidDetails = async (bidId) => {
  * Place a bid on a shipment
  */
 export const placeBid = async (bidData) => {
-  console.log('📝 Placing bid...');
+  console.log('📝 Placing bid:', bidData);
+
+  // Expected payload structure:
+  // {
+  //   transporter_id: "697be5efc75cbc247f0e6a89",
+  //   shipment_id: "697bbc23f1facde4e510c1d5",
+  //   driver_id: "697e12dba066e5be86b47ee4",
+  //   vehicle_id: "697d1ade5f7a078fa03730d4",
+  //   bid_amount: "16000"
+  // }
 
   const response = await apiCall(
     API_ENDPOINTS.BID.PLACE,

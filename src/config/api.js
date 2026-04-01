@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
     CREATE: `${API_BASE_URL}/shipment/`,
     GET_BY_ID: (id) => `${API_BASE_URL}/shipment/${id}`,
     GET_SHIPPER_SHIPMENTS: (shipperId) => `${API_BASE_URL}/shipment/shipper/${shipperId}`,
+    GET_TRANSPORTER_SHIPMENTS: (transporterId) => `${API_BASE_URL}/shipment/transporter/${transporterId}`,
     UPDATE: (id) => `${API_BASE_URL}/shipment/${id}`,
     DELETE: (id) => `${API_BASE_URL}/shipment/${id}`,
     TRACK: (id) => `${API_BASE_URL}/shipment/${id}/track`,
@@ -66,6 +67,15 @@ export const API_ENDPOINTS = {
   STATS: {
     SHIPPER: (shipperId) => `${API_BASE_URL}/stats/shipper/${shipperId}`,
     TRANSPORTER: (transporterId) => `${API_BASE_URL}/stats/transporter/${transporterId}`,
+  },
+
+  // Vehicle Endpoints (for Transporter)
+  VEHICLE: {
+    GET_BY_TRANSPORTER: (transporterId) => `${API_BASE_URL}/vehicle/transporter/${transporterId}`,
+    GET_BY_ID: (id) => `${API_BASE_URL}/vehicle/${id}`,
+    CREATE: `${API_BASE_URL}/vehicle/`,
+    UPDATE: (id) => `${API_BASE_URL}/vehicle/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/vehicle/${id}`,
   }
 };
 

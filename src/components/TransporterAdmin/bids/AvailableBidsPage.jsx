@@ -190,13 +190,13 @@ const AvailableBidsPage = () => {
                                 >
                                     <div className="relative h-40">
                                         <img
-                                            src={getFirstImage(bid?.shipment_images)}
+                                            src={bid?.shipment_images?.[0]}
                                             alt={bid?.shipment_title}
                                             fill
                                             className="object-cover"
-                                            onError={(e) => {
-                                                e.target.src = "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg";
-                                            }}
+                                            // onError={(e) => {
+                                            //     e.target.src = "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg";
+                                            // }}
                                         />
                                         <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
                                             {bid.shipment_title?.length > 30 
