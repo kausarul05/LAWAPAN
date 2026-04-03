@@ -32,7 +32,7 @@ const AvailableBidsPage = () => {
             setLoading(true);
             setError(null);
             
-            console.log('🔍 Fetching available bids...');
+            console.log('🔍 Fetching available bids for page:', page);
             
             const response = await getAvailableBids(page, itemsPerPage, search);
             
@@ -40,12 +40,24 @@ const AvailableBidsPage = () => {
 
             if (response.success) {
                 setBids(response.data || []);
-                setPagination({
-                    page: page,
-                    limit: itemsPerPage,
-                    total: response.data?.length || 0,
-                    totalPage: Math.ceil((response.data?.length || 0) / itemsPerPage)
-                });
+                
+                // FIXED: Use pagination from API response
+                if (response.data?.pagination) {
+                    setPagination({
+                        page: response.data.pagination.page,
+                        limit: response.data.pagination.limit,
+                        total: response.data.pagination.total,
+                        totalPage: response.data.pagination.totalPage
+                    });
+                } else {
+                    // Fallback if pagination not in response
+                    setPagination({
+                        page: page,
+                        limit: itemsPerPage,
+                        total: response.data?.length || 0,
+                        totalPage: Math.ceil((response.data?.length || 0) / itemsPerPage)
+                    });
+                }
             } else {
                 throw new Error(response.message || 'Failed to fetch bids');
             }
@@ -92,12 +104,12 @@ const AvailableBidsPage = () => {
         return new Intl.NumberFormat('en-US').format(price);
     };
 
-    // Get first image from shipment_images array
+    // Get first image from shipment_images array with URL replacement
     const getFirstImage = (images) => {
         if (images && images.length > 0) {
-            return images[0];
+            return replaceImageUrl(images[0]);
         }
-        return "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg"; // fallback image
+        return "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg";
     };
 
     // Generate page numbers for pagination
@@ -196,13 +208,12 @@ const AvailableBidsPage = () => {
                                 >
                                     <div className="relative h-40">
                                         <img
-                                            src={replaceImageUrl(bid?.shipment_images?.[0])}
-                                            alt={bid?.shipment_title}
-                                            fill
-                                            className="object-cover"
-                                            // onError={(e) => {
-                                            //     e.target.src = "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg";
-                                            // }}
+                                            src={getFirstImage(bid.shipment_images)}
+                                            alt={bid.shipment_title}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.src = "https://static-01.daraz.com.bd/p/feafd4647394b1ac024ee541c7103434.jpg";
+                                            }}
                                         />
                                         <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
                                             {bid.shipment_title?.length > 30 
@@ -281,7 +292,7 @@ const AvailableBidsPage = () => {
 
                                 {/* Summary */}
                                 <div className="text-center mt-4 text-sm text-gray-500">
-                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, bids.length)} of {pagination.total} bids
+                                    Showing {((currentPage - 1) * pagination.limit) + 1} to {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} bids
                                 </div>
                             </>
                         )}
