@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, AlertTriangle, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { trackShipment, getShipmentDetails } from '@/components/lib/apiClient';
+import { getShipmentDetails } from '@/components/lib/apiClient';
+import LiveTracking from '@/components/lib/LiveTracking';
 
 const ShipmentTracking = () => {
   const router = useRouter();
@@ -15,52 +16,58 @@ const ShipmentTracking = () => {
   const [error, setError] = useState(null);
   const [reportingIssue, setReportingIssue] = useState(false);
   const [confirmingDelivery, setConfirmingDelivery] = useState(false);
+  const [liveLocation, setLiveLocation] = useState(null);
+
+  useEffect(() => {
+    console.log('🔍 ShipmentTracking - Current ID from params:', id);
+    console.log('🔍 ShipmentTracking - ID type:', typeof id);
+    console.log('🔍 ShipmentTracking - ID value:', id);
+
+    if (id) {
+      fetchTrackingInfo();
+    } else {
+      console.error('❌ No shipment ID found in params');
+    }
+  }, [id]);
 
   // Fetch tracking information
   const fetchTrackingInfo = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('🔍 Fetching tracking info for shipment:', id);
-      
-      // Get shipment details first (which includes all information)
+
       const response = await getShipmentDetails(id);
-      
+
       console.log('📦 Tracking response:', response);
 
       if (response.success && response.data) {
-        // Transform the data to match your component structure
         const shipmentData = response?.data?.shipment;
-        
-        // Mock tracking-specific data since the API might not have all these fields
-        // In a real app, you might have a separate tracking endpoint
+
         setTracking({
           id: shipmentData._id,
           title: shipmentData.shipment_title,
           status: shipmentData.status,
-          estimatedDelivery: '14 Feb, 3:45 PM', // This would come from a tracking API
-          vehicleType: '401 Semi-Trailer', // This would come from assigned vehicle
-          capacity: '40 Tons', // This would come from assigned vehicle
-          plateNumber: 'AB-5432-C1', // This would come from assigned vehicle
-          driverName: 'Susan Rahman', // This would come from assigned driver
-          driverPhone: '0797111139', // This would come from assigned driver
+          estimatedDelivery: '14 Feb, 3:45 PM',
+          vehicleType: shipmentData.vehicle?.vehicle_type || 'Not assigned',
+          capacity: shipmentData.vehicle?.capicity ? `${shipmentData.vehicle.capicity} Tons` : 'N/A',
+          plateNumber: shipmentData.vehicle?.plate_number || 'N/A',
+          driverName: shipmentData.driver?.driver_name || 'Not assigned',
+          driverPhone: shipmentData.driver?.phone || 'N/A',
           proofOfDelivery: false,
-          vehicleImages: [
+          vehicleImages: shipmentData.vehicle?.vehicle_images || [
             'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop',
-            'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
-            'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=400&h=300&fit=crop',
           ],
           pickup_address: shipmentData.pickup_address,
           delivery_address: shipmentData.delivery_address,
           contact_person: shipmentData.contact_person,
           price: shipmentData.price,
-          weight : shipmentData.weight,
-          dimensions : shipmentData.dimensions,
-          type_of_packaging : shipmentData.type_of_packaging,
-          createdAt : shipmentData.createdAt,
-          updatedAt : shipmentData.updatedAt,
-          // Add any other fields you need
+          weight: shipmentData.weight,
+          dimensions: shipmentData.dimensions,
+          type_of_packaging: shipmentData.type_of_packaging,
+          createdAt: shipmentData.createdAt,
+          updatedAt: shipmentData.updatedAt,
         });
       } else {
         throw new Error(response.message || 'Failed to fetch tracking information');
@@ -68,8 +75,7 @@ const ShipmentTracking = () => {
     } catch (err) {
       console.error('❌ Error fetching tracking info:', err);
       setError(err.message);
-      
-      // If unauthorized, redirect to login
+
       if (err.message.includes('Session expired') || err.message.includes('401')) {
         router.push('/login');
       }
@@ -93,12 +99,8 @@ const ShipmentTracking = () => {
     if (issue) {
       setReportingIssue(true);
       try {
-        // Here you would make an API call to report the issue
         console.log('Reporting issue:', issue);
-        
-        // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
         alert(`Issue reported: ${issue}\nOur support team will contact you shortly.`);
       } catch (error) {
         console.error('Error reporting issue:', error);
@@ -113,14 +115,9 @@ const ShipmentTracking = () => {
     if (window.confirm('Are you sure you want to confirm delivery?')) {
       setConfirmingDelivery(true);
       try {
-        // Here you would make an API call to update the shipment status
         console.log('Confirming delivery for shipment:', id);
-        
-        // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
         alert('Delivery confirmed successfully!');
-        // Refresh tracking info
         fetchTrackingInfo();
       } catch (error) {
         console.error('Error confirming delivery:', error);
@@ -131,7 +128,11 @@ const ShipmentTracking = () => {
     }
   };
 
-  // Get status color
+  const handleLocationUpdate = (location) => {
+    setLiveLocation(location);
+    console.log('Live location updated:', location);
+  };
+
   const getStatusColor = (status) => {
     const statusLower = (status || '').toLowerCase();
     if (statusLower.includes('progress') || statusLower.includes('pending')) {
@@ -199,25 +200,28 @@ const ShipmentTracking = () => {
           {tracking.status}
         </span>
         <span className="ml-3 text-sm text-gray-500">
-          ID: {tracking.id}
+          ID: {tracking.id?.slice(-8)}
         </span>
+        {liveLocation && (
+          <span className="ml-3 text-xs text-green-600">
+            Live: {liveLocation.lat.toFixed(5)}, {liveLocation.lng.toFixed(5)}
+          </span>
+        )}
       </div>
 
-      {/* Map Placeholder - In a real app, you'd integrate a map here */}
-      <div className="bg-white rounded-lg p-6 mb-6 h-64 relative overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&h=400&fit=crop"
-          alt="Map"
-          className="w-full h-full object-cover rounded"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-lg">
-            <MapPin className="w-12 h-12 text-blue-600 mx-auto mb-2" />
-            <p className="text-black font-medium">Route Map View</p>
-            <p className="text-xs text-gray-500 mt-1">From: {tracking.pickup_address?.substring(0, 30)}...</p>
-            <p className="text-xs text-gray-500">To: {tracking.delivery_address?.substring(0, 30)}...</p>
-          </div>
+      {/* Live Map - Integrated */}
+      <div className="bg-white rounded-lg p-6 mb-6">
+        <h2 className="text-lg font-semibold text-black mb-3">Live Location</h2>
+        <div className="h-[400px] w-full rounded-lg overflow-hidden bg-gray-100">
+          <LiveTracking
+            shipmentId={id}
+            shipmentTitle={tracking.title}
+            onLocationUpdate={handleLocationUpdate}
+          />
         </div>
+        <p className="text-xs text-gray-400 text-center mt-3">
+          Live tracking updates when driver shares location
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -229,7 +233,7 @@ const ShipmentTracking = () => {
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Shipment Id</p>
-                <p className="text-black font-bold text-xl">{tracking.id}</p>
+                <p className="text-black font-bold text-xl">{tracking.id?.slice(-8)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500 mb-1">Estimated Delivery</p>
@@ -250,25 +254,6 @@ const ShipmentTracking = () => {
               <div>
                 <p className="text-sm text-gray-500 mb-1">Contact Person</p>
                 <p className="text-black font-medium">{tracking.contact_person || 'N/A'}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Proof of delivery</p>
-                <div className="flex items-center gap-2">
-                  <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-                    tracking.proofOfDelivery 
-                      ? 'border-green-500 bg-green-500' 
-                      : 'border-blue-500'
-                  }`}>
-                    {tracking.proofOfDelivery && (
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                  <span className="text-sm text-black">
-                    {tracking.proofOfDelivery ? 'Confirmed' : 'Pending'}
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -292,22 +277,24 @@ const ShipmentTracking = () => {
             </div>
 
             {/* Vehicle Images */}
-            <div className="mt-6">
-              <p className="text-sm text-gray-500 mb-3">Vehicle Images</p>
-              <div className="grid grid-cols-3 gap-3">
-                {tracking.vehicleImages.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`Vehicle ${idx + 1}`}
-                    className="w-full h-24 object-cover rounded-lg"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
-                    }}
-                  />
-                ))}
+            {tracking.vehicleImages && tracking.vehicleImages.length > 0 && (
+              <div className="mt-6">
+                <p className="text-sm text-gray-500 mb-3">Vehicle Images</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {tracking.vehicleImages.slice(0, 3).map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Vehicle ${idx + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -328,7 +315,7 @@ const ShipmentTracking = () => {
             </div>
 
             <div className="mt-6 space-y-3">
-              <button 
+              <button
                 onClick={handleReportIssue}
                 disabled={reportingIssue}
                 className="w-full py-3 border border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -345,14 +332,13 @@ const ShipmentTracking = () => {
                   </>
                 )}
               </button>
-              <button 
+              <button
                 onClick={handleConfirmDelivery}
                 disabled={confirmingDelivery || tracking.status === 'DELIVERED' || tracking.status === 'COMPLETED'}
-                className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
-                  tracking.status === 'DELIVERED' || tracking.status === 'COMPLETED'
-                    ? 'bg-gray-400 text-white cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                }`}
+                className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${tracking.status === 'DELIVERED' || tracking.status === 'COMPLETED'
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
               >
                 {confirmingDelivery ? (
                   <>
@@ -368,7 +354,7 @@ const ShipmentTracking = () => {
             </div>
           </div>
 
-          {/* Additional Information from API */}
+          {/* Additional Information */}
           <div className="bg-white rounded-lg p-6">
             <h2 className="text-lg font-semibold text-black mb-4">Shipment Details</h2>
             <div className="space-y-3 text-sm">
@@ -395,7 +381,7 @@ const ShipmentTracking = () => {
         </div>
       </div>
 
-      {/* Created/Updated timestamps */}
+      {/* Timestamps */}
       <div className="mt-6 text-xs text-gray-400 flex justify-between">
         <p>Created: {tracking.createdAt ? new Date(tracking.createdAt).toLocaleString() : 'N/A'}</p>
         <p>Last Updated: {tracking.updatedAt ? new Date(tracking.updatedAt).toLocaleString() : 'N/A'}</p>
