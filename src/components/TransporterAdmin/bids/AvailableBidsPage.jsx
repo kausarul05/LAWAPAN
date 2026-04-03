@@ -5,6 +5,12 @@ import Image from "next/image";
 import { Search, ChevronLeft, ChevronRight, MapPin, Loader } from "lucide-react";
 import { getAvailableBids } from "@/components/lib/apiClient";
 
+// Helper function to replace localhost URLs with server URL
+const replaceImageUrl = (url) => {
+  if (!url) return null;
+  return url.replace('http://localhost:5000', 'https://server.lawapantruck.com');
+};
+
 const AvailableBidsPage = () => {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
@@ -14,11 +20,11 @@ const AvailableBidsPage = () => {
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({
         page: 1,
-        limit: 8,
+        limit: 10,
         total: 0,
         totalPage: 0
     });
-    const itemsPerPage = 8;
+    const itemsPerPage = 10;
 
     // Fetch available bids
     const fetchAvailableBids = async (page = 1, search = '') => {
@@ -190,7 +196,7 @@ const AvailableBidsPage = () => {
                                 >
                                     <div className="relative h-40">
                                         <img
-                                            src={bid?.shipment_images?.[0]}
+                                            src={replaceImageUrl(bid?.shipment_images?.[0])}
                                             alt={bid?.shipment_title}
                                             fill
                                             className="object-cover"

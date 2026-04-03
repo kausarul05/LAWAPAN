@@ -56,9 +56,7 @@ const ShipmentTracking = () => {
           driverName: shipmentData.driver?.driver_name || 'Not assigned',
           driverPhone: shipmentData.driver?.phone || 'N/A',
           proofOfDelivery: false,
-          vehicleImages: shipmentData.vehicle?.vehicle_images || [
-            'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop',
-          ],
+          vehicleImages: shipmentData.vehicle?.vehicle_images,
           pickup_address: shipmentData.pickup_address,
           delivery_address: shipmentData.delivery_address,
           contact_person: shipmentData.contact_person,
@@ -287,9 +285,9 @@ const ShipmentTracking = () => {
                       src={img}
                       alt={`Vehicle ${idx + 1}`}
                       className="w-full h-24 object-cover rounded-lg"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
-                      }}
+                      // onError={(e) => {
+                      //   e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                      // }}
                     />
                   ))}
                 </div>

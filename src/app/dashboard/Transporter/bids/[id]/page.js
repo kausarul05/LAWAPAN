@@ -15,6 +15,12 @@ import {
 } from "lucide-react";
 import { getAvailableBids, getShipmentDetails, placeBid, getTransporterDrivers, getTransporterVehicles } from "@/components/lib/apiClient";
 
+// Helper function to replace localhost URLs with server URL
+const replaceImageUrl = (url) => {
+  if (!url) return null;
+  return url.replace('http://localhost:5000', 'https://server.lawapantruck.com');
+};
+
 const BidDetailPage = () => {
     const params = useParams();
     const router = useRouter();
@@ -319,7 +325,7 @@ const BidDetailPage = () => {
                         >
                             <div className="relative mb-3">
                                 <img
-                                    src={getFirstImage(bid.shipment_images)}
+                                    src={replaceImageUrl(getFirstImage(bid.shipment_images))}
                                     alt={bid.shipment_title}
                                     className="w-full h-32 object-cover rounded-lg"
                                 />
@@ -367,7 +373,7 @@ const BidDetailPage = () => {
                         {shipment.shipment_images && shipment.shipment_images.length > 0 && (
                             <div className="relative mb-6">
                                 <img
-                                    src={shipment.shipment_images[currentImageIndex]}
+                                    src={replaceImageUrl(shipment.shipment_images[currentImageIndex])}
                                     alt="Shipment"
                                     className="w-full h-64 object-cover rounded-lg"
                                 />
