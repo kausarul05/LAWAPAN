@@ -7,6 +7,12 @@ import {
 import { useRouter, useParams } from 'next/navigation';
 import { getVehicleDetails, updateVehicle, deleteVehicle } from '@/components/lib/apiClient';
 
+// Helper function to replace localhost URLs with server URL
+const replaceImageUrl = (url) => {
+  if (!url) return null;
+  return url.replace('http://localhost:5000', 'https://server.lawapantruck.com');
+};
+
 export default function VehicleDynamicPage() {
   const router = useRouter();
   const { id } = useParams();
@@ -66,7 +72,7 @@ export default function VehicleDynamicPage() {
           plate_id: response.data.plate_id,
           insurance: response.data.insurance,
           technical_visit: response.data.technical_visit,
-          images: response.data.vehicle_images || []
+          images: replaceImageUrl(response.data.vehicle_images)
         };
         setVehicle(vehicleData);
         setOriginalVehicle(vehicleData);
@@ -84,6 +90,8 @@ export default function VehicleDynamicPage() {
       setLoading(false);
     }
   };
+
+  console.log("Set origin ", originalVehicle)
 
   // Handle input change
   const handleUpdate = (e) => {
@@ -296,7 +304,7 @@ function DetailsView({ vehicle, currentImageIndex, nextImage, prevImage, onEdit,
       {/* Slider Area */}
       <div className="relative w-full h-80 bg-[#F3F4F6] rounded-3xl mb-10 group flex items-center justify-center overflow-hidden">
         {vehicle.images && vehicle.images.length > 0 ? (
-          <img src={vehicle.images[currentImageIndex]} className="h-full object-contain" alt="Truck" />
+          <img src={replaceImageUrl(vehicle.images[currentImageIndex])} className="h-full object-contain" alt="Truck" />
         ) : (
           <div className="text-gray-400">No image available</div>
         )}
@@ -333,7 +341,7 @@ function DetailsView({ vehicle, currentImageIndex, nextImage, prevImage, onEdit,
 
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <DocItem label="Plate ID" fileUrl={vehicle.plate_id?.[0]} />
+        <DocItem label="Plate ID" fileUrl={replaceImageUrl(vehicle.plate_id?.[0])} />
         <DocItem label="Insurance" fileUrl={vehicle.insurance?.[0]} />
         <DocItem label="Technical Visit" fileUrl={vehicle.technical_visit?.[0]} />
       </div>
@@ -377,24 +385,24 @@ function EditForm({ vehicle, onChange, onDelete, docPreviews, newFiles, handleFi
         <EditDocItem 
           label="Plate ID" 
           fieldName="plate_id"
-          currentFile={vehicle.plate_id?.[0]}
-          preview={docPreviews.plate_id}
+          currentFile={replaceImageUrl(vehicle.plate_id?.[0])}
+          preview={replaceImageUrl(docPreviews.plate_id)}
           newFile={newFiles.plate_id}
           onFileChange={handleFileChange}
         />
         <EditDocItem 
           label="Insurance" 
           fieldName="insurance"
-          currentFile={vehicle.insurance?.[0]}
-          preview={docPreviews.insurance}
+          currentFile={replaceImageUrl(vehicle.insurance?.[0])}
+          preview={replaceImageUrl(docPreviews.insurance)}
           newFile={newFiles.insurance}
           onFileChange={handleFileChange}
         />
         <EditDocItem 
           label="Technical Visit" 
           fieldName="technical_visit"
-          currentFile={vehicle.technical_visit?.[0]}
-          preview={docPreviews.technical_visit}
+          currentFile={replaceImageUrl(vehicle.technical_visit?.[0])}
+          preview={replaceImageUrl(docPreviews.technical_visit)}
           newFile={newFiles.technical_visit}
           onFileChange={handleFileChange}
         />
@@ -406,8 +414,8 @@ function EditForm({ vehicle, onChange, onDelete, docPreviews, newFiles, handleFi
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <EditImageItem 
             fieldName="vehicle_images"
-            currentImage={vehicle.images?.[0]}
-            preview={docPreviews.vehicle_images}
+            currentImage={replaceImageUrl(vehicle.images?.[0])}
+            preview={replaceImageUrl(docPreviews.vehicle_images)}
             newFile={newFiles.vehicle_images}
             onFileChange={handleFileChange}
           />

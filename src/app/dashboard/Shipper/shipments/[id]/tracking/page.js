@@ -227,7 +227,7 @@ const ShipmentTracking = () => {
         <div className="space-y-6">
           {/* Basic Information */}
           <div className="bg-white rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Basic Information</h2>
+            <h2 className="text-lg font-semibold text-black mb-4">Basic Information xxx</h2>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Shipment Id</p>
@@ -265,7 +265,7 @@ const ShipmentTracking = () => {
                 <p className="text-black font-medium">{tracking.vehicleType}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">Plate Number</p>
+                <p className="text-sm text-gray-500 mb-1">Plate Number xx</p>
                 <p className="text-black font-medium">{tracking.plateNumber}</p>
               </div>
               <div>

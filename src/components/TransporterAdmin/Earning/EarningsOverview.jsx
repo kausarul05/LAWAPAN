@@ -37,7 +37,7 @@ export default function EarningsOverview() {
     <div className="p-8 bg-gray-50 min-h-screen font-sans">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Earnings Overview</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Earnings Overview <span className='bg-red-500 text-sm px-2 rounded text-white'>Working</span></h1>
         <div className="flex  overflow-hidden bg-white border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="flex items-center px-3 text-gray-600">
             <Search size={18} />

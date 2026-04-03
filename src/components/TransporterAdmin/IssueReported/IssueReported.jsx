@@ -56,7 +56,7 @@ const IssueReported = () => {
       console.log('📦 Issues response:', response);
 
       if (response.success) {
-        setIssues(response.data.issues || []);
+        setIssues(response.data || []);
         setPagination(response.data.pagination || {
           page: page,
           limit: 10,
@@ -245,17 +245,17 @@ const IssueReported = () => {
   };
 
   // Get status color
-  const getStatusColor = (status) => {
-    const statusLower = (status || '').toLowerCase();
-    if (statusLower.includes('pending') || statusLower.includes('open')) {
-      return 'bg-[#FF5C00]';
-    } else if (statusLower.includes('resolved') || statusLower.includes('closed')) {
-      return 'bg-green-600';
-    } else if (statusLower.includes('in progress')) {
-      return 'bg-blue-600';
-    }
-    return 'bg-gray-600';
-  };
+  // const getStatusColor = (status) => {
+  //   const statusLower = (status || '');
+  //   if (statusLower?.includes('pending') || statusLower?.includes('open')) {
+  //     return 'bg-[#FF5C00]';
+  //   } else if (statusLower?.includes('resolved') || statusLower?.includes('closed')) {
+  //     return 'bg-green-600';
+  //   } else if (statusLower?.includes('in progress')) {
+  //     return 'bg-blue-600';
+  //   }
+  //   return 'bg-gray-600';
+  // };
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
@@ -370,7 +370,7 @@ const IssueReported = () => {
                       {formatDate(issue.reported_on || issue.createdAt)}
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`${getStatusColor(issue.status)} text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5 w-fit`}>
+                      <span className={`${issue.status} text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5 w-fit`}>
                         <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                         {issue.status || 'Pending'}
                       </span>

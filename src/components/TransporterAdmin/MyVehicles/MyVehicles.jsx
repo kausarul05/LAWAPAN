@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader, X, Upload } from 'lucide-react';
 import { getTransporterVehicles, deleteVehicle, createVehicle } from '@/components/lib/apiClient';
 
+// Helper function to replace localhost URLs with server URL
+const replaceImageUrl = (url) => {
+  if (!url) return null;
+  return url.replace('http://localhost:5000', 'https://server.lawapantruck.com');
+};
+
 export default function MyVehicles() {
   const router = useRouter();
   const [vehicles, setVehicles] = useState([]);
@@ -71,7 +77,7 @@ export default function MyVehicles() {
           id: vehicle._id,
           name: `${vehicle.vehicle_type} - ${vehicle.capicity}T`,
           plate: vehicle.plate_number,
-          img: vehicle.vehicle_images?.[0] || 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg',
+          img: replaceImageUrl(vehicle.vehicle_images?.[0]),
           vehicle_number: vehicle.vehicle_number,
           vehicle_type: vehicle.vehicle_type,
           capacity: vehicle.capicity,
@@ -304,12 +310,12 @@ export default function MyVehicles() {
   };
 
   // Get first image URL
-  const getVehicleImage = (vehicle) => {
-    if (vehicle.vehicle_images && vehicle.vehicle_images.length > 0) {
-      return vehicle.vehicle_images[0];
-    }
-    // return 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
-  };
+  // const getVehicleImage = (vehicle) => {
+  //   if (vehicle.vehicle_images && vehicle.vehicle_images.length > 0) {
+  //     return vehicle.vehicle_images[0];
+  //   }
+  //   // return 'https://www.thecarexpert.co.uk/wp-content/uploads/2021/10/Tesla-Model-3-2024-1920x960.jpg';
+  // };
 
   if (loading && vehicles.length === 0) {
     return (
@@ -380,7 +386,7 @@ export default function MyVehicles() {
               <div key={v.id} className="bg-white p-5 rounded-[24px] shadow-sm border border-gray-50 flex flex-col items-center group hover:shadow-md transition">
                 <div className="relative w-full h-32 mb-4">
                   <img 
-                    src={getVehicleImage(v)} 
+                    src={replaceImageUrl(v.vehicle_images?.[0])} 
                     alt={v.name} 
                     className="w-full h-32 object-contain group-hover:scale-105 transition duration-300"
                     // onError={(e) => {
