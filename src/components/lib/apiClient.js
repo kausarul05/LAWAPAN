@@ -949,7 +949,7 @@ export const updateDriver = async (driverId, formData) => {
   
   const response = await apiCall(
     API_ENDPOINTS.DRIVER.UPDATE(driverId),
-    'PUT',
+    'PATCH', // Using PATCH method as specified
     formData,
     {},
     true // isFormData = true for file uploads

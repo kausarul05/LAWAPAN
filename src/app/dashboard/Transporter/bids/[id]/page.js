@@ -13,7 +13,7 @@ import {
     X,
     Loader
 } from "lucide-react";
-import { getAvailableBids, getShipmentDetails, placeBid } from "@/components/lib/apiClient";
+import { getAvailableBids, getShipmentDetails, placeBid, getTransporterDrivers, getTransporterVehicles } from "@/components/lib/apiClient";
 
 const BidDetailPage = () => {
     const params = useParams();
@@ -35,6 +35,8 @@ const BidDetailPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [drivers, setDrivers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
+    const [loadingDrivers, setLoadingDrivers] = useState(false);
+    const [loadingVehicles, setLoadingVehicles] = useState(false);
 
     // Get transporter ID from localStorage
     const getTransporterId = () => {
@@ -85,27 +87,76 @@ const BidDetailPage = () => {
         }
     };
 
-    // Fetch drivers and vehicles (mock data - replace with actual API calls)
-    const fetchDriversAndVehicles = async () => {
-        // In a real app, you would fetch from API
-        setDrivers([
-            { id: "driver_1", name: "John Katla", phone: "+250 78 23 14 99" },
-            { id: "driver_2", name: "Mike Wilson", phone: "+250 78 23 14 98" },
-            { id: "driver_3", name: "Sarah Johnson", phone: "+250 78 23 14 97" }
-        ]);
-        
-        setVehicles([
-            { id: "vehicle_1", name: "Mercedes Actros - 20T", plate: "AB-1422U" },
-            { id: "vehicle_2", name: "Volvo FH - 18T", plate: "CD-5678X" },
-            { id: "vehicle_3", name: "Scania R - 22T", plate: "EF-9012Z" }
-        ]);
+    // Fetch real drivers from API
+    const fetchDrivers = async () => {
+        try {
+            setLoadingDrivers(true);
+            const transporterId = getTransporterId();
+            if (!transporterId) return;
+
+            console.log('👤 Fetching drivers for transporter:', transporterId);
+            
+            const response = await getTransporterDrivers(transporterId, 1, 100, '');
+            
+            console.log('📦 Drivers response:', response);
+
+            if (response.success && response.data) {
+                const transformedDrivers = response.data.drivers.map(driver => ({
+                    id: driver._id,
+                    name: driver.driver_name,
+                    phone: driver.phone,
+                    email: driver.email,
+                    profile_picture: driver.profile_picture?.[0] || null,
+                    driver_license: driver.driver_license
+                }));
+                setDrivers(transformedDrivers);
+            }
+        } catch (err) {
+            console.error('Error fetching drivers:', err);
+        } finally {
+            setLoadingDrivers(false);
+        }
+    };
+
+    // Fetch real vehicles from API
+    const fetchVehicles = async () => {
+        try {
+            setLoadingVehicles(true);
+            const transporterId = getTransporterId();
+            if (!transporterId) return;
+
+            console.log('🚛 Fetching vehicles for transporter:', transporterId);
+            
+            const response = await getTransporterVehicles(transporterId, 1, 100, '');
+            
+            console.log('📦 Vehicles response:', response);
+
+            if (response.success && response.data) {
+                const transformedVehicles = response.data.vehicles.map(vehicle => ({
+                    id: vehicle._id,
+                    name: `${vehicle.vehicle_type} - ${vehicle.capicity}T`,
+                    plate: vehicle.plate_number,
+                    vehicle_number: vehicle.vehicle_number,
+                    vehicle_type: vehicle.vehicle_type,
+                    capacity: vehicle.capicity,
+                    year_model: vehicle.year_model,
+                    image: vehicle.vehicle_images?.[0] || null
+                }));
+                setVehicles(transformedVehicles);
+            }
+        } catch (err) {
+            console.error('Error fetching vehicles:', err);
+        } finally {
+            setLoadingVehicles(false);
+        }
     };
 
     useEffect(() => {
         if (params.id) {
             fetchShipmentDetails();
             fetchAvailableBids();
-            fetchDriversAndVehicles();
+            fetchDrivers();
+            fetchVehicles();
         }
     }, [params.id]);
 
@@ -202,14 +253,14 @@ const BidDetailPage = () => {
 
     // Filter drivers based on search
     const filteredDrivers = drivers.filter(driver =>
-        driver.name.toLowerCase().includes(driverSearch.toLowerCase()) ||
-        driver.phone.includes(driverSearch)
+        driver.name?.toLowerCase().includes(driverSearch.toLowerCase()) ||
+        driver.phone?.includes(driverSearch)
     );
 
     // Filter vehicles based on search
     const filteredVehicles = vehicles.filter(vehicle =>
-        vehicle.name.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
-        vehicle.plate.toLowerCase().includes(vehicleSearch.toLowerCase())
+        vehicle.name?.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
+        vehicle.plate?.toLowerCase().includes(vehicleSearch.toLowerCase())
     );
 
     if (loading) {
@@ -508,7 +559,7 @@ const BidDetailPage = () => {
                                     value={bidAmount}
                                     onChange={(e) => setBidAmount(e.target.value)}
                                     placeholder="Enter your bid amount"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
 
@@ -555,21 +606,30 @@ const BidDetailPage = () => {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
                                 />
                                 <div className="max-h-64 overflow-y-auto space-y-2">
-                                    {filteredDrivers.map((driver) => (
-                                        <div
-                                            key={driver.id}
-                                            onClick={() => setSelectedDriver(driver)}
-                                            className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                                                selectedDriver?.id === driver.id
-                                                    ? 'border-blue-500 bg-blue-50'
-                                                    : 'border-gray-200 hover:border-blue-300'
-                                            }`}
-                                        >
-                                            <p className="font-medium text-gray-900">{driver.name}</p>
-                                            <p className="text-sm text-gray-600">{driver.phone}</p>
+                                    {loadingDrivers ? (
+                                        <div className="text-center py-4">
+                                            <Loader className="w-6 h-6 animate-spin text-[#036BB4] mx-auto" />
+                                            <p className="text-sm text-gray-500 mt-2">Loading drivers...</p>
                                         </div>
-                                    ))}
-                                    {filteredDrivers.length === 0 && (
+                                    ) : filteredDrivers.length > 0 ? (
+                                        filteredDrivers.map((driver) => (
+                                            <div
+                                                key={driver.id}
+                                                onClick={() => setSelectedDriver(driver)}
+                                                className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                                                    selectedDriver?.id === driver.id
+                                                        ? 'border-blue-500 bg-blue-50'
+                                                        : 'border-gray-200 hover:border-blue-300'
+                                                }`}
+                                            >
+                                                <p className="font-medium text-gray-900">{driver.name}</p>
+                                                <p className="text-sm text-gray-600">{driver.phone}</p>
+                                                {driver.email && (
+                                                    <p className="text-xs text-gray-500 mt-1">{driver.email}</p>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
                                         <p className="text-center text-gray-500 py-4">No drivers found</p>
                                     )}
                                 </div>
@@ -585,21 +645,28 @@ const BidDetailPage = () => {
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
                                 />
                                 <div className="max-h-64 overflow-y-auto space-y-2">
-                                    {filteredVehicles.map((vehicle) => (
-                                        <div
-                                            key={vehicle.id}
-                                            onClick={() => setSelectedVehicle(vehicle)}
-                                            className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                                                selectedVehicle?.id === vehicle.id
-                                                    ? 'border-blue-500 bg-blue-50'
-                                                    : 'border-gray-200 hover:border-blue-300'
-                                            }`}
-                                        >
-                                            <p className="font-medium text-gray-900">{vehicle.name}</p>
-                                            <p className="text-sm text-gray-600">Plate: {vehicle.plate}</p>
+                                    {loadingVehicles ? (
+                                        <div className="text-center py-4">
+                                            <Loader className="w-6 h-6 animate-spin text-[#036BB4] mx-auto" />
+                                            <p className="text-sm text-gray-500 mt-2">Loading vehicles...</p>
                                         </div>
-                                    ))}
-                                    {filteredVehicles.length === 0 && (
+                                    ) : filteredVehicles.length > 0 ? (
+                                        filteredVehicles.map((vehicle) => (
+                                            <div
+                                                key={vehicle.id}
+                                                onClick={() => setSelectedVehicle(vehicle)}
+                                                className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                                                    selectedVehicle?.id === vehicle.id
+                                                        ? 'border-blue-500 bg-blue-50'
+                                                        : 'border-gray-200 hover:border-blue-300'
+                                                }`}
+                                            >
+                                                <p className="font-medium text-gray-900">{vehicle.name}</p>
+                                                <p className="text-sm text-gray-600">Plate: {vehicle.plate}</p>
+                                                <p className="text-xs text-gray-500">Capacity: {vehicle.capacity} tons</p>
+                                            </div>
+                                        ))
+                                    ) : (
                                         <p className="text-center text-gray-500 py-4">No vehicles found</p>
                                     )}
                                 </div>

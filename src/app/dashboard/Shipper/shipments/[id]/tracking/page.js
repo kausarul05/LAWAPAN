@@ -31,14 +31,14 @@ const ShipmentTracking = () => {
 
       if (response.success && response.data) {
         // Transform the data to match your component structure
-        const shipmentData = response.data;
+        const shipmentData = response?.data?.shipment;
         
         // Mock tracking-specific data since the API might not have all these fields
         // In a real app, you might have a separate tracking endpoint
         setTracking({
           id: shipmentData._id,
-          title: shipmentData.shipment_title || 'Untitled Shipment',
-          status: shipmentData.status || 'PENDING',
+          title: shipmentData.shipment_title,
+          status: shipmentData.status,
           estimatedDelivery: '14 Feb, 3:45 PM', // This would come from a tracking API
           vehicleType: '401 Semi-Trailer', // This would come from assigned vehicle
           capacity: '40 Tons', // This would come from assigned vehicle
