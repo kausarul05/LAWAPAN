@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
             }`}
           >
             {/* Navbar */}
-            <Navbar />
+            {/* <Navbar /> */}
 
             {/* Page Content */}
             <div className="p-4 flex-1">

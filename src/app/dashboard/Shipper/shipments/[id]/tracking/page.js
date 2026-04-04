@@ -227,7 +227,7 @@ const ShipmentTracking = () => {
         <div className="space-y-6">
           {/* Basic Information */}
           <div className="bg-white rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Basic Information xxx</h2>
+            <h2 className="text-lg font-semibold text-black mb-4">Basic Information</h2>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Shipment Id</p>
@@ -312,7 +312,7 @@ const ShipmentTracking = () => {
               </div>
             </div>
 
-            <div className="mt-6 space-y-3">
+            {/* <div className="mt-6 space-y-3">
               <button
                 onClick={handleReportIssue}
                 disabled={reportingIssue}
@@ -349,7 +349,7 @@ const ShipmentTracking = () => {
                   'Confirm Delivery'
                 )}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Additional Information */}

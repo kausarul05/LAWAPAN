@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Truck,
@@ -29,7 +29,7 @@ const navItems = [
   { name: "Driver Profiles", href: "/dashboard/Transporter/driver-profiles", icon: UserCircle },
   { name: "Issue reported", href: "/dashboard/Transporter/Issue-reported", icon: AlertCircle },
   { name: "Withdraw requests", href: "/dashboard/Transporter/withdraw", icon: Wallet },
-]; 
+];
 
 const settingsDropdown = [
   { name: "Edit Profile", href: "/dashboard/Transporter/setting/edit-profile-transporter", icon: User },
@@ -38,22 +38,49 @@ const settingsDropdown = [
 
 const TransporterSidebar = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // Logout function
+  const handleLogout = () => {
+    // Clear all localStorage items
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('shipper_id');
+    localStorage.removeItem('transporter_id');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('userID');
+    localStorage.removeItem('rememberEmail');
+    
+    // Clear cookies
+    document.cookie.split(";").forEach(function(c) {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+    
+    // Alternative way to clear specific token cookie
+    document.cookie = "token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+    
+    // Redirect to home page
+    router.push('/');
+  };
 
   return (
     <aside
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white text-black shadow-lg z-40 
+      className={`fixed left-0 h-[calc(100vh)] bg-white text-black shadow-lg z-40 
       transition-all duration-300 ease-in-out border-r border-[#D6D6D6] overflow-x-hidden
       ${isOpen ? "w-64" : "w-20"}`}
     >
       <div className="flex flex-col h-full overflow-y-auto no-scrollbar">
-        
+
         {/* Header Section */}
         <div className={`flex items-center h-16 border-b border-[#D6D6D6] flex-shrink-0 transition-all duration-300 ${isOpen ? "px-6 justify-between" : "justify-center"}`}>
           {isOpen && (
-            <span className="font-bold text-[#036BB4] text-lg whitespace-nowrap overflow-hidden">
-              LAWAPAN
-            </span>
+            <Link href="/dashboard/Transporter">
+              <span className="font-bold text-[#036BB4] text-lg whitespace-nowrap overflow-hidden">
+                LAWAPAN
+              </span>
+            </Link>
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -71,18 +98,16 @@ const TransporterSidebar = ({ isOpen, setIsOpen }) => {
               <Link
                 key={name}
                 href={href}
-                className={`flex items-center h-12 rounded-lg transition-all relative group ${
-                  isActive
-                    ? "bg-[#036BB4] text-white shadow-md shadow-blue-200"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
-                } ${!isOpen ? "justify-center" : "px-3"}`}
+                className={`flex items-center h-12 rounded-lg transition-all relative group ${isActive
+                  ? "bg-[#036BB4] text-white shadow-md shadow-blue-200"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-blue-600"
+                  } ${!isOpen ? "justify-center" : "px-3"}`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                
+
                 <span
-                  className={`ml-3 font-medium text-sm whitespace-nowrap transition-all duration-300 ${
-                    isOpen ? "opacity-100 w-auto visible" : "opacity-0 w-0 invisible absolute"
-                  }`}
+                  className={`ml-3 font-medium text-sm whitespace-nowrap transition-all duration-300 ${isOpen ? "opacity-100 w-auto visible" : "opacity-0 w-0 invisible absolute"
+                    }`}
                 >
                   {name}
                 </span>
@@ -100,32 +125,29 @@ const TransporterSidebar = ({ isOpen, setIsOpen }) => {
           <div className="pt-2">
             <button
               onClick={() => isOpen && setSettingsOpen(!settingsOpen)}
-              className={`w-full flex items-center h-12 rounded-lg transition-all relative group ${
-                settingsOpen && isOpen ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
-              } ${!isOpen ? "justify-center" : "px-3"}`}
+              className={`w-full flex items-center h-12 rounded-lg transition-all relative group ${settingsOpen && isOpen ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
+                } ${!isOpen ? "justify-center" : "px-3"}`}
             >
               <Settings className="w-5 h-5 flex-shrink-0" />
-              
-              <div className={`flex items-center justify-between flex-grow transition-all duration-300 ${
-                isOpen ? "ml-3 opacity-100 visible" : "opacity-0 w-0 invisible absolute"
-              }`}>
+
+              <div className={`flex items-center justify-between flex-grow transition-all duration-300 ${isOpen ? "ml-3 opacity-100 visible" : "opacity-0 w-0 invisible absolute"
+                }`}>
                 <span className="font-medium text-sm whitespace-nowrap">Settings</span>
                 <ChevronUp
                   className={`w-4 h-4 transition-transform duration-300 ${settingsOpen ? "rotate-0" : "rotate-180"}`}
                 />
               </div>
 
-               {!isOpen && (
-                  <div className="absolute left-16 bg-gray-900 text-white text-xs rounded py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-xl">
-                    Settings
-                  </div>
-                )}
+              {!isOpen && (
+                <div className="absolute left-16 bg-gray-900 text-white text-xs rounded py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-xl">
+                  Settings
+                </div>
+              )}
             </button>
 
             {/* Submenu Alignment */}
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-              settingsOpen && isOpen ? "max-h-60 mt-2" : "max-h-0"
-            }`}>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${settingsOpen && isOpen ? "max-h-60 mt-2" : "max-h-0"
+              }`}>
               <div className="bg-gray-50 rounded-lg p-1 space-y-1 mx-1 border border-gray-100">
                 {settingsDropdown.map(({ name, href, icon: Icon }) => {
                   const isActive = pathname === href;
@@ -133,11 +155,10 @@ const TransporterSidebar = ({ isOpen, setIsOpen }) => {
                     <Link
                       key={name}
                       href={href}
-                      className={`flex items-center px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                        isActive
-                          ? "bg-[#036BB4] text-white shadow-md"
-                          : "text-gray-500 hover:text-blue-600 hover:bg-white"
-                      }`}
+                      className={`flex items-center px-3 py-2 rounded-md text-xs font-medium transition-all ${isActive
+                        ? "bg-[#036BB4] text-white shadow-md"
+                        : "text-gray-500 hover:text-blue-600 hover:bg-white"
+                        }`}
                     >
                       <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
                       <span className="whitespace-nowrap">{name}</span>
@@ -151,16 +172,17 @@ const TransporterSidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Logout Button Footer */}
         <div className="p-3 border-t border-[#D6D6D6] mt-auto">
-          <button className={`flex items-center h-12 w-full text-red-500 hover:bg-red-50 rounded-lg transition-all group relative ${
-            !isOpen ? "justify-center" : "px-3"
-          }`}>
+          <button 
+            onClick={handleLogout}
+            className={`flex items-center h-12 w-full text-red-500 hover:bg-red-50 rounded-lg transition-all group relative ${!isOpen ? "justify-center" : "px-3"
+            }`}
+          >
             <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span className={`ml-3 text-sm font-semibold transition-all duration-300 ${
-              isOpen ? "opacity-100 visible" : "opacity-0 w-0 invisible absolute"
-            }`}>
+            <span className={`ml-3 text-sm font-semibold transition-all duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 w-0 invisible absolute"
+              }`}>
               Logout
             </span>
-            
+
             {!isOpen && (
               <div className="absolute left-16 bg-red-600 text-white text-xs rounded py-1.5 px-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap shadow-lg">
                 Logout

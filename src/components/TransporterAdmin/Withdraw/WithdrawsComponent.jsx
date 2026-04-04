@@ -99,7 +99,7 @@ const WithdrawsComponent = ({ onWithdrawClick }) => {
   return (
     <div className="bg-white text-black min-h-screen p-6">
       <div>
-        <h2 className="text-2xl font-bold mb-6 text-black">Withdrawals</h2>
+        <h2 className="text-2xl font-bold mb-6 text-black">Withdrawals <span className='bg-red-500 px-2 text-white rounded text-sm'>Working</span></h2>
 
         {/* Balance Card */}
         <div className="relative rounded-2xl p-8 mb-8 overflow-hidden ">
