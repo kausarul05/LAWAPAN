@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Pencil, Trash2, FileText, Loader } from "lucide-react";
 import { getDriverDetails, deleteDriver } from "@/components/lib/apiClient";
+import { toast } from "react-toastify";
 
 export default function DriverDetails() {
   const router = useRouter();
@@ -59,14 +60,14 @@ export default function DriverDetails() {
       console.log('✅ Delete response:', response);
 
       if (response.success) {
-        alert('Driver deleted successfully!');
+        toast.success('Driver deleted successfully!');
         router.push('/dashboard/Transporter/driver-profiles');
       } else {
         throw new Error(response.message || 'Failed to delete driver');
       }
     } catch (err) {
       console.error('Error deleting driver:', err);
-      alert(err.message || 'Failed to delete driver. Please try again.');
+      toast.error(err.message || 'Failed to delete driver. Please try again.');
     } finally {
       setDeleting(false);
     }

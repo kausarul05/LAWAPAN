@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Trash2, Pencil, X, Upload, Loader, FileText } from "lucide-react";
 import { getDriverDetails, updateDriver, deleteDriver } from "@/components/lib/apiClient";
+import { toast } from "react-toastify";
 
 export default function EditDriver() {
   const router = useRouter();
@@ -97,7 +98,7 @@ export default function EditDriver() {
   // Handle update
   const handleUpdate = async () => {
     if (!formData.driver_name.trim() || !formData.phone.trim()) {
-      alert('Driver name and phone number are required');
+      toast.error('Driver name and phone number are required');
       return;
     }
 
@@ -119,14 +120,14 @@ export default function EditDriver() {
       console.log('✅ Update response:', response);
 
       if (response.success) {
-        alert('Driver updated successfully!');
+        toast.success('Driver updated successfully!');
         router.push(`/dashboard/Transporter/driver-profiles/${params.id}`);
       } else {
         throw new Error(response.message || 'Failed to update driver');
       }
     } catch (err) {
       console.error('Error updating driver:', err);
-      alert(err.message || 'Failed to update driver. Please try again.');
+      toast.error(err.message || 'Failed to update driver. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -148,14 +149,14 @@ export default function EditDriver() {
       console.log('✅ Delete response:', response);
 
       if (response.success) {
-        alert('Driver deleted successfully!');
+        toast.success('Driver deleted successfully!');
         router.push('/dashboard/Transporter/driver-profiles');
       } else {
         throw new Error(response.message || 'Failed to delete driver');
       }
     } catch (err) {
       console.error('Error deleting driver:', err);
-      alert(err.message || 'Failed to delete driver. Please try again.');
+      toast.error(err.message || 'Failed to delete driver. Please try again.');
     } finally {
       setDeleting(false);
     }

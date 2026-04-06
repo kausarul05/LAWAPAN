@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { getVehicleDetails, updateVehicle, deleteVehicle } from '@/components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {
@@ -145,7 +146,7 @@ export default function VehicleDynamicPage() {
       console.log('✅ Update response:', response);
 
       if (response.success) {
-        alert('Vehicle updated successfully!');
+        toast.success('Vehicle updated successfully!');
         setIsEditing(false);
         fetchVehicleDetails(); // Refresh data
         setNewFiles({ plate_id: null, insurance: null, technical_visit: null, vehicle_images: null });
@@ -155,7 +156,7 @@ export default function VehicleDynamicPage() {
       }
     } catch (err) {
       console.error('Error updating vehicle:', err);
-      alert(err.message || 'Failed to update vehicle. Please try again.');
+      toast.error(err.message || 'Failed to update vehicle. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -175,14 +176,14 @@ export default function VehicleDynamicPage() {
       console.log('✅ Delete response:', response);
 
       if (response.success) {
-        alert('Vehicle deleted successfully!');
+        toast.success('Vehicle deleted successfully!');
         router.push('/dashboard/Transporter/my-vehicles');
       } else {
         throw new Error(response.message || 'Failed to delete vehicle');
       }
     } catch (err) {
       console.error('Error deleting vehicle:', err);
-      alert(err.message || 'Failed to delete vehicle. Please try again.');
+      toast.error(err.message || 'Failed to delete vehicle. Please try again.');
     } finally {
       setSubmitting(false);
     }

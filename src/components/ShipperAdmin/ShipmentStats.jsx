@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Upload, ArrowRight, ArrowLeft, Loader } from 'lucide-react';
 import { getShipperStats, createShipment } from '@/components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 const MonthDropdown = ({ month, setMonth, show, setShow, months }) => (
   <div className="relative">
@@ -169,7 +170,7 @@ const ShipmentStats = () => {
   const handleNextStep = () => {
     if (currentStep === 1) {
       if (!shipmentData.shipment_title || !shipmentData.weight || !shipmentData.dimensions) {
-        alert('Please fill in all required fields (Shipment title, Weight, Dimensions)');
+        toast.error('Please fill in all required fields (Shipment title, Weight, Dimensions)');
         return;
       }
     }
@@ -180,7 +181,7 @@ const ShipmentStats = () => {
 
   const handleSubmitShipment = async () => {
     if (!shipmentData.pickup_address || !shipmentData.delivery_address || !shipmentData.contact_person) {
-      alert('Please fill in all required fields in Pickup & Delivery Details');
+      toast.error('Please fill in all required fields in Pickup & Delivery Details');
       return;
     }
 
@@ -229,17 +230,17 @@ const ShipmentStats = () => {
       console.log('✅ Shipment created:', response);
 
       if (response.success) {
-        alert(`Shipment "${shipmentData.shipment_title}" created successfully!`);
+        toast.success(`Shipment "${shipmentData.shipment_title}" created successfully!`);
         // Refresh stats after creating shipment
         fetchStats();
         handleCloseModal();
-        alert(`Shipment published! You'll receive bids from transporters soon.`);
+        toast.info(`Shipment published! You'll receive bids from transporters soon.`);
       } else {
         throw new Error(response.message || 'Failed to create shipment');
       }
     } catch (err) {
       console.error('❌ Error creating shipment:', err);
-      alert(err.message || 'Failed to create shipment. Please try again.');
+      toast.error(err.message || 'Failed to create shipment. Please try again.');
     } finally {
       setSubmitting(false);
     }

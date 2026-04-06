@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader, X, Upload } from 'lucide-react';
 import { getTransporterVehicles, deleteVehicle, createVehicle } from '@/components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {
@@ -132,7 +133,7 @@ export default function MyVehicles() {
       }
     } catch (err) {
       console.error('Error deleting vehicle:', err);
-      alert(err.message || 'Failed to delete vehicle. Please try again.');
+      toast.error(err.message || 'Failed to delete vehicle. Please try again.');
     } finally {
       setDeletingId(null);
     }
@@ -239,7 +240,7 @@ export default function MyVehicles() {
       console.log('✅ Create vehicle response:', response);
 
       if (response.success) {
-        alert('Vehicle added successfully!');
+        toast.success('Vehicle added successfully!');
         setShowAddModal(false);
         resetForm();
         fetchVehicles(currentPage, searchTerm);
@@ -248,7 +249,7 @@ export default function MyVehicles() {
       }
     } catch (err) {
       console.error('Error adding vehicle:', err);
-      alert(err.message || 'Failed to add vehicle. Please try again.');
+      toast.error(err.message || 'Failed to add vehicle. Please try again.');
     } finally {
       setSubmitting(false);
     }

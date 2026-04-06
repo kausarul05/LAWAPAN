@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader, X, Upload } from "lucide-react";
 import { getTransporterDrivers, deleteDriver, createDriver } from "@/components/lib/apiClient";
+import { toast } from 'react-toastify';
 
 export default function DriverManagement() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function DriverManagement() {
       }
     } catch (err) {
       console.error('Error deleting driver:', err);
-      alert(err.message || 'Failed to delete driver. Please try again.');
+      toast.error(err.message || 'Failed to delete driver. Please try again.');
     } finally {
       setDeletingId(null);
     }
@@ -210,7 +211,7 @@ export default function DriverManagement() {
       console.log('✅ Create driver response:', response);
 
       if (response.success) {
-        alert('Driver added successfully!');
+        toast.success('Driver added successfully!');
         setShowAddModal(false);
         resetForm();
         fetchDrivers(currentPage, searchTerm);
@@ -219,7 +220,7 @@ export default function DriverManagement() {
       }
     } catch (err) {
       console.error('Error adding driver:', err);
-      alert(err.message || 'Failed to add driver. Please try again.');
+      toast.error(err.message || 'Failed to add driver. Please try again.');
     } finally {
       setSubmitting(false);
     }

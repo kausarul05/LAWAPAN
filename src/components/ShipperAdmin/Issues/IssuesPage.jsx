@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, Trash2, Search, ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getShipmentIssues, deleteIssue } from '@/components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 const IssuesPage = () => {
     const router = useRouter();
@@ -86,7 +87,7 @@ const IssuesPage = () => {
             }
         } catch (err) {
             console.error('Error deleting issue:', err);
-            alert(err.message || 'Failed to delete issue. Please try again.');
+            toast.error(err.message || 'Failed to delete issue. Please try again.');
         } finally {
             setDeletingId(null);
         }

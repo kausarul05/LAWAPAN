@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Eye, Trash2, Search, ChevronLeft, ChevronRight, Plus, X, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getTransporterIssues, deleteIssue, createIssue, getTransporterShipments } from '@/components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 const IssueReported = () => {
   const router = useRouter();
@@ -124,7 +125,7 @@ const IssueReported = () => {
       }
     } catch (err) {
       console.error('Error deleting issue:', err);
-      alert(err.message || 'Failed to delete issue. Please try again.');
+      toast.error(err.message || 'Failed to delete issue. Please try again.');
     } finally {
       setDeletingId(null);
     }
@@ -166,7 +167,7 @@ const IssueReported = () => {
       console.log('✅ Create issue response:', response);
 
       if (response.success) {
-        alert('Issue reported successfully!');
+        toast.success('Issue reported successfully!');
         setShowCreateModal(false);
         resetForm();
         fetchIssues(currentPage, searchTerm);
@@ -175,7 +176,7 @@ const IssueReported = () => {
       }
     } catch (err) {
       console.error('Error creating issue:', err);
-      alert(err.message || 'Failed to create issue. Please try again.');
+      toast.error(err.message || 'Failed to create issue. Please try again.');
     } finally {
       setSubmitting(false);
     }

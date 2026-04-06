@@ -188,7 +188,7 @@ const BidDetailPage = () => {
 
     const handleContinueToAssign = async () => {
         if (!bidAmount) {
-            alert('Please enter your bid amount');
+            toast.error('Please enter your bid amount');
             return;
         }
         
@@ -198,7 +198,7 @@ const BidDetailPage = () => {
 
     const handleSubmitAssignment = async () => {
         if (!selectedDriver || !selectedVehicle) {
-            alert('Please select both a driver and a vehicle');
+            toast.error('Please select both a driver and a vehicle');
             return;
         }
         
@@ -225,7 +225,7 @@ const BidDetailPage = () => {
             console.log('✅ Bid response:', response);
             
             if (response.success) {
-                alert('Bid placed successfully!');
+                toast.success('Bid placed successfully!');
                 setShowAssignModal(false);
                 router.push(`/dashboard/Transporter/my-bids`);
             } else {
@@ -233,7 +233,7 @@ const BidDetailPage = () => {
             }
         } catch (err) {
             console.error('Error placing bid:', err);
-            alert(err.message || 'Failed to place bid. Please try again.');
+            toast.error(err.message || 'Failed to place bid. Please try again.');
         } finally {
             setSubmitting(false);
         }

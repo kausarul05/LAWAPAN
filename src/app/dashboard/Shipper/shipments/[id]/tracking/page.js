@@ -5,6 +5,7 @@ import { ArrowLeft, MapPin, AlertTriangle, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { getShipmentDetails } from '@/components/lib/apiClient';
 import LiveTracking from '@/components/lib/LiveTracking';
+import { toast } from 'react-toastify';
 
 const ShipmentTracking = () => {
   const router = useRouter();
@@ -99,10 +100,10 @@ const ShipmentTracking = () => {
       try {
         console.log('Reporting issue:', issue);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        alert(`Issue reported: ${issue}\nOur support team will contact you shortly.`);
+        toast.success(`Issue reported: ${issue}\nOur support team will contact you shortly.`);
       } catch (error) {
         console.error('Error reporting issue:', error);
-        alert('Failed to report issue. Please try again.');
+        toast.error('Failed to report issue. Please try again.');
       } finally {
         setReportingIssue(false);
       }
@@ -115,11 +116,11 @@ const ShipmentTracking = () => {
       try {
         console.log('Confirming delivery for shipment:', id);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        alert('Delivery confirmed successfully!');
+        toast.success('Delivery confirmed successfully!');
         fetchTrackingInfo();
       } catch (error) {
         console.error('Error confirming delivery:', error);
-        alert('Failed to confirm delivery. Please try again.');
+        toast.error('Failed to confirm delivery. Please try again.');
       } finally {
         setConfirmingDelivery(false);
       }

@@ -12,6 +12,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
+import { toast } from 'react-toastify';
 
 const HeroBanner = () => {
   const [pickupLocation, setPickupLocation] = useState('');
@@ -36,7 +37,7 @@ const HeroBanner = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      alert("Searching for: " + pickupLocation);
+      toast.success("Searching for: " + pickupLocation);
     }, 1000);
   };
 
