@@ -379,7 +379,7 @@ export default function CompleteTransporterProfile() {
 
               {/* Step Content */}
               <div className="mb-10">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">{currentConfig.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">{currentConfig.title} <span className='text-red-500 ml-1 font-bold'>*</span></h2>
                 {renderStepContent()}
 
                 {errors[currentConfig.field] && (

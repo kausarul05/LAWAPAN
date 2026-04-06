@@ -268,7 +268,7 @@ export default function SignUpForm() {
 
         <div className="w-full max-w-md text-center mb-8 mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-          <p className="text-gray-600">Join thousands of businesses and transporters</p>
+          <p className="text-gray-600">join the first west African e-plateform of businesses and transporters</p>
         </div>
 
         {successMessage && (
@@ -333,6 +333,7 @@ export default function SignUpForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {role === 'transporter' ? 'Transport company name' : 'Company name'}
+              <span className='text-red-500 ml-1 font-bold'>*</span>
             </label>
             <input
               type="text"
@@ -347,7 +348,7 @@ export default function SignUpForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email address <span className='text-red-500 ml-1 font-bold'>*</span></label>
             <input
               type="email"
               name="email"
@@ -361,14 +362,14 @@ export default function SignUpForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone number <span className='text-red-500 ml-1 font-bold'>*</span></label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handlePhoneChange}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none text-black"
-              placeholder="+226 XX XX XX XX"
+              placeholder="+22X XX XX XX XX"
               maxLength="16"
               disabled={isSubmitting}
             />
@@ -376,7 +377,7 @@ export default function SignUpForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Country <span className='text-red-500 ml-1 font-bold'>*</span></label>
             <div className="relative">
               <select
                 name="country"
@@ -398,7 +399,7 @@ export default function SignUpForm() {
           {role === 'transporter' && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Number of Trucks</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Number of Trucks <span className='text-red-500 ml-1 font-bold'>*</span></label>
                 <input
                   type="number"
                   name="numberOfTrucks"
@@ -413,7 +414,7 @@ export default function SignUpForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Truck Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Truck Type <span className='text-red-500 ml-1 font-bold'>*</span></label>
                 <div className="relative">
                   <button
                     type="button"
@@ -488,7 +489,7 @@ export default function SignUpForm() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password <span className='text-red-500 ml-1 font-bold'>*</span></label>
             <input
               type="password"
               name="password"
@@ -502,7 +503,7 @@ export default function SignUpForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className='text-red-500 ml-1 font-bold'>*</span></label>
             <input
               type="password"
               name="confirmPassword"
