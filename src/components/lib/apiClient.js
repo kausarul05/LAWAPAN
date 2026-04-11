@@ -4,7 +4,7 @@
 // WITH ENHANCED ROLE DETECTION
 // ============================================
 
-import { API_ENDPOINTS } from "@/config/api";
+import { API_ENDPOINTS } from "../../config/api";
 import { extractIdsFromToken, extractRoleFromToken, extractUserIdFromToken } from "./jwtDecoder";
 
 // ============================================

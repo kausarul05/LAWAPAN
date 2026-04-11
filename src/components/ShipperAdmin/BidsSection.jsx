@@ -11,7 +11,7 @@ import {
     Globe,
     Loader
 } from 'lucide-react';
-import { getAvailableBids } from '@/components/lib/apiClient';
+import { getAvailableBids } from '../../components/lib/apiClient';
 
 const BidsSection = () => {
     const [shipments, setShipments] = useState([]);

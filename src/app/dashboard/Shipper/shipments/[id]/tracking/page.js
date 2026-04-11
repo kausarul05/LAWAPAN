@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, AlertTriangle, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getShipmentDetails } from '@/components/lib/apiClient';
-import LiveTracking from '@/components/lib/LiveTracking';
+import { getShipmentDetails } from '../../../../../../components/lib/apiClient';
+import LiveTracking from '../../../../../../components/lib/LiveTracking';
 import { toast } from 'react-toastify';
 
 const ShipmentTracking = () => {

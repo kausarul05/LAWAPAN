@@ -1,4 +1,4 @@
-import Invoices from '@/components/ShipperAdmin/Invoices/Invoices'
+import Invoices from '../../../../components/ShipperAdmin/Invoices/Invoices'
 import React from 'react'
 
 const page = () => {

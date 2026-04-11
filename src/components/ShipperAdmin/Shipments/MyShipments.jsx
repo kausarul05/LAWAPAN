@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Truck, ChevronLeft, ChevronRight, X, Plus, Image as ImageIcon } from 'lucide-react';
-import { createShipment, getShipperShipments } from '@/components/lib/apiClient';
+import { createShipment, getShipperShipments } from '../../../components/lib/apiClient';
 
 // Create Shipment Modal Component
 const CreateShipmentModal = ({ isOpen, onClose, onSuccess }) => {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Upload, ArrowRight, ArrowLeft, Loader } from 'lucide-react';
-import { getShipperStats, createShipment } from '@/components/lib/apiClient';
+import { getShipperStats, createShipment } from '../../components/lib/apiClient';
 import { toast } from 'react-toastify';
 
 const MonthDropdown = ({ month, setMonth, show, setShow, months }) => (

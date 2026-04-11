@@ -1,4 +1,4 @@
-import MyShipments from '@/components/ShipperAdmin/Shipments/MyShipments'
+import MyShipments from '../../../../components/ShipperAdmin/Shipments/MyShipments'
 import React from 'react'
 
 const page = () => {

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getShipmentDetails } from '@/components/lib/apiClient';
+import { getShipmentDetails } from '../../../../../components/lib/apiClient';
 
 const ShipmentDetail = () => {
     const router = useRouter();

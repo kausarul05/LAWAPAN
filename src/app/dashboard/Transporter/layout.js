@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './transporter.css';
 
-import Navbar from '@/components/ui/Navbar';
+// import Navbar from '@/components/ui/Navbar';
 import TransporterSidebar from '@/components/TransporterAdmin/TransporterSidebar';
 
 

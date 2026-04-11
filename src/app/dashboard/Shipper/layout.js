@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './shipper.css';
 
-import Navbar from '@/components/ui/Navbar';
-import Sidebar from '@/components/ShipperAdmin/Sidebar';
+// import Navbar from '@/components/ui/Navbar';
+import Sidebar from '../../../components/ShipperAdmin/Sidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

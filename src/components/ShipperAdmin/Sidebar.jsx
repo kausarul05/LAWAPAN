@@ -15,12 +15,14 @@ import {
   Wallet,
   Menu,
   X,
+  CreditCard,
 } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard/Shipper", icon: LayoutDashboard },
   { name: "My Shipments", href: "/dashboard/Shipper/shipments", icon: Truck },
   { name: "Invoices", href: "/dashboard/Shipper/invoices", icon: FileText },
+  { name: "Payment Request", href: "/dashboard/Shipper/payment-request", icon: CreditCard },
   { name: "Issue reported", href: "/dashboard/Shipper/issues", icon: AlertCircle },
 ];
 

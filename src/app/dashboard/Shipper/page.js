@@ -1,5 +1,5 @@
-import BidsSection from '@/components/ShipperAdmin/BidsSection'
-import ShipmentStats from '@/components/ShipperAdmin/ShipmentStats'
+import BidsSection from '../../../components/ShipperAdmin/BidsSection'
+import ShipmentStats from '../../../components/ShipperAdmin/ShipmentStats'
 import React from 'react'
 
 const page = () => {
