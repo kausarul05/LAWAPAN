@@ -1,4 +1,4 @@
-import ActiveShipments from '@/components/TransporterAdmin/ActiveShipments'
+import ActiveShipments from '../../../../components/TransporterAdmin/ActiveShipments'
 import React from 'react'
 
 const page = () => {

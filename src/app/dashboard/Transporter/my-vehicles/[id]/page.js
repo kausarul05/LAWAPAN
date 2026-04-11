@@ -5,7 +5,7 @@ import {
   Pencil, Trash2, Save, X, Plus, Loader, Upload 
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getVehicleDetails, updateVehicle, deleteVehicle } from '@/components/lib/apiClient';
+import { getVehicleDetails, updateVehicle, deleteVehicle } from '../../../../../components/lib/apiClient';
 import { toast } from 'react-toastify';
 
 // Helper function to replace localhost URLs with server URL

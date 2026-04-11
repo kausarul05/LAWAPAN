@@ -1,8 +1,8 @@
 "use client"
 
 
-import WithdrawRequestComponent from '@/components/TransporterAdmin/Withdraw/WithdrawRequestComponent';
-import WithdrawsComponent from '@/components/TransporterAdmin/Withdraw/WithdrawsComponent';
+import WithdrawRequestComponent from '../../../../components/TransporterAdmin/Withdraw/WithdrawRequestComponent';
+import WithdrawsComponent from '../../../../components/TransporterAdmin/Withdraw/WithdrawsComponent';
 import { useState } from 'react';
 import React from 'react'
 

@@ -1,4 +1,4 @@
-import ProfilePage from '@/components/ShipperAdmin/EditProfile/ProfilePage'
+import ProfilePage from '../../../../../components/ShipperAdmin/EditProfile/ProfilePage'
 import React from 'react'
 
 const page = () => {

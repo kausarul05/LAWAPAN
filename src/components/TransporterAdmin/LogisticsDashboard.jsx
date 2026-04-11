@@ -3,12 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, FileText, Loader, MapPin, RefreshCw } from 'lucide-react';
-import { getTransporterShipments, getShipmentDetails, getDriverDetails, getVehicleDetails } from '@/components/lib/apiClient';
+import { getTransporterShipments, getShipmentDetails, getDriverDetails, getVehicleDetails } from '../../components/lib/apiClient';
 import dynamic from 'next/dynamic';
 
 // Dynamically import LiveTracking to avoid SSR issues
 const LiveTracking = dynamic(
-  () => import('@/components/lib/LiveTracking'),
+  () => import('../../components/lib/LiveTracking'),
   { ssr: false, loading: () => (
     <div className="h-full flex items-center justify-center bg-gray-100">
       <Loader className="w-8 h-8 animate-spin text-[#036BB4]" />

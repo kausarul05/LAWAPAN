@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lawapantruck · Pay 200</title>
+<style>
+
+    * {
+
+      box-sizing: border-box;
+
+      margin: 0;
+
+    }
+
+    body {
+
+      background: #f4f7fc;
+
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      min-height: 100vh;
+
+      margin: 0;
+
+      padding: 20px;
+
+    }
+
+    .card {
+
+      background: white;
+
+      max-width: 520px;
+
+      width: 100%;
+
+      border-radius: 28px;
+
+      box-shadow: 0 20px 35px -8px rgba(0, 20, 45, 0.15);
+
+      padding: 30px 28px;
+
+      transition: all 0.2s ease;
+
+      border: 1px solid #e9eef3;
+
+    }
+
+    h1 {
+
+      font-size: 1.9rem;
+
+      font-weight: 600;
+
+      letter-spacing: -0.02em;
+
+      margin-bottom: 6px;
+
+      color: #0a2540;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+    }
+
+    .badge {
+
+      background: #e6edf6;
+
+      color: #1e4a7a;
+
+      font-size: 0.8rem;
+
+      font-weight: 500;
+
+      padding: 4px 10px;
+
+      border-radius: 30px;
+
+      margin-left: 8px;
+
+    }
+
+    .subhead {
+
+      color: #4a5c6c;
+
+      margin-bottom: 28px;
+
+      font-size: 1rem;
+
+      border-left: 3px solid #2b7e9b;
+
+      padding-left: 16px;
+
+      font-weight: 400;
+
+    }
+
+    .amount-box {
+
+      background: #f0f5fa;
+
+      border-radius: 18px;
+
+      padding: 18px 20px;
+
+      margin-bottom: 24px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      border: 1px solid #d9e2ec;
+
+    }
+
+    .amount-label {
+
+      font-weight: 500;
+
+      color: #1f3a4e;
+
+      font-size: 1.1rem;
+
+    }
+
+    .amount-value {
+
+      font-weight: 700;
+
+      font-size: 2rem;
+
+      color: #0b2b40;
+
+      letter-spacing: -0.01em;
+
+    }
+
+    .currency {
+
+      font-size: 1rem;
+
+      font-weight: 400;
+
+      color: #5b7487;
+
+      margin-left: 4px;
+
+    }
+
+    button {
+
+      background: #0a2540;
+
+      color: white;
+
+      border: none;
+
+      font-weight: 600;
+
+      font-size: 1.2rem;
+
+      padding: 16px 24px;
+
+      width: 100%;
+
+      border-radius: 60px;
+
+      cursor: pointer;
+
+      box-shadow: 0 6px 14px rgba(10, 37, 64, 0.2);
+
+      transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 10px;
+
+      border: 1px solid #1e4a7a;
+
+      letter-spacing: 0.3px;
+
+      margin-bottom: 18px;
+
+    }
+
+    button:hover {
+
+      background: #123a5e;
+
+      box-shadow: 0 10px 20px rgba(10, 37, 64, 0.25);
+
+    }
+
+    button:active {
+
+      transform: scale(0.98);
+
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    }
+
+    button:disabled {
+
+      background: #9aafc4;
+
+      box-shadow: none;
+
+      transform: none;
+
+      cursor: not-allowed;
+
+      border-color: #b0c2d3;
+
+    }
+
+    .status-area {
+
+      margin-top: 12px;
+
+    }
+
+    .result-panel {
+
+      background: #f9fcff;
+
+      border-radius: 20px;
+
+      padding: 18px 20px;
+
+      border: 1px solid #cbdde9;
+
+      margin-bottom: 14px;
+
+    }
+
+    .result-title {
+
+      font-weight: 600;
+
+      color: #1a445b;
+
+      margin-bottom: 12px;
+
+      font-size: 1rem;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.5px;
+
+    }
+
+    .data-row {
+
+      display: flex;
+
+      margin-bottom: 12px;
+
+      align-items: flex-start;
+
+    }
+
+    .data-label {
+
+      width: 90px;
+
+      font-weight: 500;
+
+      color: #2e506a;
+
+      font-size: 0.9rem;
+
+    }
+
+    .data-value {
+
+      flex: 1;
+
+      color: #0b2b40;
+
+      word-break: break-all;
+
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Cascadia Code', monospace;
+
+      background: #eef3f9;
+
+      padding: 4px 10px;
+
+      border-radius: 30px;
+
+      font-size: 0.9rem;
+
+      border: 1px solid #d1dfeb;
+
+    }
+
+    .payment-link {
+
+      background: #e2ebf3;
+
+      color: #004070;
+
+      text-decoration: none;
+
+      font-weight: 500;
+
+      padding: 6px 14px;
+
+      border-radius: 40px;
+
+      display: inline-block;
+
+      transition: background 0.2s;
+
+      border: 1px solid #b7cfdf;
+
+    }
+
+    .payment-link:hover {
+
+      background: #cbdde9;
+
+      text-decoration: underline;
+
+    }
+
+    .error-box {
+
+      background: #fff6f5;
+
+      border-left: 6px solid #c23b2b;
+
+      padding: 16px 18px;
+
+      border-radius: 16px;
+
+      color: #a12b1f;
+
+      font-weight: 500;
+
+      margin-top: 16px;
+
+      border: 1px solid #fad9d4;
+
+      word-break: break-word;
+
+    }
+
+    .success-badge {
+
+      background: #0e6245;
+
+      color: white;
+
+      padding: 2px 12px;
+
+      border-radius: 40px;
+
+      font-size: 0.8rem;
+
+      font-weight: 500;
+
+      margin-left: 8px;
+
+    }
+
+    .loading-spinner {
+
+      display: inline-block;
+
+      width: 18px;
+
+      height: 18px;
+
+      border: 2px solid rgba(255,255,255,0.3);
+
+      border-radius: 50%;
+
+      border-top-color: white;
+
+      animation: spin 0.7s linear infinite;
+
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .flex-row {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      flex-wrap: wrap;
+
+    }
+
+    .note {
+
+      color: #62778a;
+
+      font-size: 0.8rem;
+
+      margin-top: 8px;
+
+    }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>
+
+    ⚡ Lawapantruck
+<span class="badge">sandbox</span>
+</h1>
+<div class="subhead">POST /api/v1/pay · initiate payment</div>
+ 
+  <!-- fixed amount display -->
+<div class="amount-box">
+<span class="amount-label">Amount to pay</span>
+<span class="amount-value">200 <span class="currency">FCFA</span></span>
+</div>
+ 
+  <!-- action button -->
+<button id="payTriggerBtn">
+<span id="btnText">💳 Initiate payment</span>
+<span id="btnSpinner" class="loading-spinner" style="display: none;"></span>
+</button>
+ 
+  <!-- result & error container -->
+<div id="resultContainer" class="status-area">
+<!-- dynamic content will be injected here -->
+</div>
+<div class="note">
+
+    * Sends POST with <code>{"amount": 200}</code> · response details appear below.
+</div>
+</div>
+ 
+<script>
+
+  (function() {
+
+    'use strict';
+ 
+    // ---- DOM elements ----
+
+    const payBtn = document.getElementById('payTriggerBtn');
+
+    const btnText = document.getElementById('btnText');
+
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    const resultContainer = document.getElementById('resultContainer');
+ 
+    // API configuration (exactly as required)
+
+    const API_URL = 'https://server.lawapantruck.com/api/v1/pay';
+
+    const PAYLOAD = { amount: 200 };  // fixed body
+ 
+    // Helper: clear previous results/errors and show loading state
+
+    function setLoadingState(isLoading) {
+
+      if (isLoading) {
+
+        payBtn.disabled = true;
+
+        btnText.style.opacity = '0.7';
+
+        btnSpinner.style.display = 'inline-block';
+
+        // clear old content, show a neutral message
+
+        resultContainer.innerHTML = `
+<div style="padding: 16px; text-align: center; color: #3a6782; background: #ecf3fa; border-radius: 40px;">
+<span style="display: inline-block; width: 20px; height: 20px; border: 2px solid #b0c8dd; border-top-color: #0a2540; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px;"></span>
+
+            Contacting server ...
+</div>
+
+        `;
+
+      } else {
+
+        payBtn.disabled = false;
+
+        btnText.style.opacity = '1';
+
+        btnSpinner.style.display = 'none';
+
+      }
+
+    }
+ 
+    // Render success response (as per expected structure)
+
+    function renderSuccess(data) {
+
+      // data expected: { success, payment_url, token, status }
+
+      const successFlag = data.success === true ? '✅ success' : '⚠️ success: false';
+
+      const paymentUrl = data.payment_url || '';
+
+      const token = data.token || '—';
+
+      const status = data.status || 'unknown';
+ 
+      // Build a nice result panel
+
+      const html = `
+<div class="result-panel">
+<div class="flex-row" style="justify-content: space-between; margin-bottom: 16px;">
+<span class="result-title">📦 Payment response</span>
+<span class="success-badge">${successFlag}</span>
+</div>
+<div class="data-row">
+<span class="data-label">Token</span>
+<span class="data-value">${escapeHtml(token)}</span>
+</div>
+<div class="data-row">
+<span class="data-label">Status</span>
+<span class="data-value" style="text-transform: capitalize;">${escapeHtml(status)}</span>
+</div>
+<div class="data-row">
+<span class="data-label">Payment URL</span>
+<div style="flex:1;">
+
+              ${ paymentUrl ? 
+
+                `<a href="${escapeHtml(paymentUrl)}" target="_blank" rel="noopener noreferrer" class="payment-link" style="word-break: break-all;">
+
+                  🔗 ${escapeHtml(paymentUrl.length > 45 ? paymentUrl.substring(0,45)+'…' : paymentUrl)}
+</a>` 
+
+                : '<span class="data-value" style="background: #f1e0db;">missing</span>' 
+
+              }
+</div>
+</div>
+
+          ${ paymentUrl ? `
+<div style="margin-top: 18px;">
+<a href="${escapeHtml(paymentUrl)}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #0a2540; color: white; padding: 10px 22px; border-radius: 50px; text-decoration: none; font-weight: 500; font-size: 0.95rem;">
+
+              ⚡ Go to checkout →
+</a>
+</div>` : '' }
+</div>
+<div style="font-size: 0.8rem; margin-top: 6px; color: #3b6e8f;">POST ${API_URL} · amount: 200</div>
+
+      `;
+
+      resultContainer.innerHTML = html;
+
+    }
+ 
+    // Simple escape to prevent XSS (though data is from API, we stay safe)
+
+    function escapeHtml(text) {
+
+      if (!text) return text;
+
+      return String(text)
+
+        .replace(/&/g, '&amp;')
+
+        .replace(/</g, '&lt;')
+
+        .replace(/>/g, '&gt;')
+
+        .replace(/"/g, '&quot;')
+
+        .replace(/'/g, '&#039;');
+
+    }
+ 
+    // Render error message (shows clearly on page)
+
+    function renderError(errorMessage, details = '') {
+
+      let displayMessage = errorMessage;
+
+      if (details) {
+
+        displayMessage += ' — ' + details;
+
+      }
+
+      const errorHtml = `
+<div class="error-box">
+<strong style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+<span style="font-size: 1.5rem;">❌</span> Payment initiation failed
+</strong>
+<div style="font-family: monospace; margin-top: 5px; padding-left: 6px;">${escapeHtml(displayMessage)}</div>
+
+          ${ details ? `<div style="margin-top: 8px; font-size: 0.85rem; opacity: 0.9;">Details: ${escapeHtml(details)}</div>` : ''}
+<div style="margin-top: 12px; font-size: 0.9rem;">🔁 Check console (F12) for more info. Ensure CORS is handled by server.</div>
+</div>
+
+      `;
+
+      resultContainer.innerHTML = errorHtml;
+
+    }
+ 
+    // Main function: call API with POST, handle all cases
+
+    async function initiatePayment() {
+
+      // Prevent double clicks
+
+      if (payBtn.disabled) return;
+ 
+      setLoadingState(true);
+ 
+      try {
+
+        const response = await fetch(API_URL, {
+
+          method: 'POST',
+
+          headers: {
+
+            'Content-Type': 'application/json',
+
+            // Some APIs might need additional headers; we keep minimal
+
+            'Accept': 'application/json',
+
+          },
+
+          body: JSON.stringify(PAYLOAD)
+
+        });
+ 
+        // Try to parse response body as JSON (even for errors)
+
+        let responseData;
+
+        const contentType = response.headers.get('content-type');
+
+        if (contentType && contentType.includes('application/json')) {
+
+          responseData = await response.json();
+
+        } else {
+
+          // if not json, get text for debugging
+
+          const text = await response.text();
+
+          throw new Error(`Unexpected response format (non-JSON). Status: ${response.status}`);
+
+        }
+ 
+        // Check if HTTP status is not ok (4xx, 5xx)
+
+        if (!response.ok) {
+
+          // Use error message from response if available, otherwise status text
+
+          const errorMsg = responseData?.message || responseData?.error || `HTTP ${response.status} ${response.statusText}`;
+
+          let detailInfo = '';
+
+          if (responseData) {
+
+            detailInfo = JSON.stringify(responseData, null, 1).substring(0, 200);
+
+          }
+
+          renderError(errorMsg, detailInfo);
+
+          console.error('API error response:', responseData);
+
+          return;
+
+        }
+ 
+        // At this point response.ok is true.
+
+        // We expect success field, but we treat it as success anyway.
+
+        console.log('Payment response:', responseData);
+
+        // Validate if response contains expected fields (or just render)
+
+        // Even if success:false, we show the data (error message should be displayed)
+
+        if (responseData && typeof responseData === 'object') {
+
+          // If success === false explicitly, we might want to show as error?
+
+          if (responseData.success === false) {
+
+            // It's a logical failure, but HTTP 200. Show error style.
+
+            const reason = responseData.message || responseData.error || 'Payment initiation declined';
+
+            renderError(reason, JSON.stringify(responseData));
+
+            return;
+
+          }
+
+          // Otherwise, render success panel (even if success field missing, we assume ok)
+
+          renderSuccess(responseData);
+
+        } else {
+
+          // fallback: show raw but as error
+
+          renderError('Invalid response structure', JSON.stringify(responseData));
+
+        }
+
+      } catch (error) {
+
+        // Network errors, CORS, or fetch failures
+
+        console.error('Fetch error:', error);
+
+        let errorMsg = error.message;
+
+        if (errorMsg.includes('Failed to fetch') || errorMsg.includes('NetworkError')) {
+
+          errorMsg = 'Network error: Could not reach server. Check CORS, connectivity or URL.';
+
+        } else if (errorMsg.includes('Unexpected response format')) {
+
+          // already formatted
+
+        }
+
+        renderError(errorMsg, error.toString());
+
+      } finally {
+
+        setLoadingState(false);
+
+      }
+
+    }
+ 
+    // Attach event listener to button
+
+    payBtn.addEventListener('click', initiatePayment);
+ 
+    // Optional: pre-fill a small hint (empty initial state)
+
+    resultContainer.innerHTML = `
+<div style="padding: 16px 10px; color: #597a95; background: transparent; border-radius: 20px; text-align: center; border: 1px dashed #b7cfdf;">
+
+        ⬆️ Click the button to send POST with amount 200.<br>Response (payment_url, token, status) will appear here.
+</div>
+
+    `;
+
+  })();
+</script>
+</body>
+</html>
+ 

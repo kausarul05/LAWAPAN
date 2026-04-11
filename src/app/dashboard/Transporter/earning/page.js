@@ -1,4 +1,4 @@
-import EarningsOverview from '@/components/TransporterAdmin/Earning/EarningsOverview'
+import EarningsOverview from '../../../../components/TransporterAdmin/Earning/EarningsOverview'
 import React from 'react'
 
 const page = () => {

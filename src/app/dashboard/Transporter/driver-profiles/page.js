@@ -1,4 +1,4 @@
-import DriverManagement from '@/components/TransporterAdmin/DriverProfiles/DriverManagement'
+import DriverManagement from '../../../../components/TransporterAdmin/DriverProfiles/DriverManagement'
 import React from 'react'
 
 const page = () => {

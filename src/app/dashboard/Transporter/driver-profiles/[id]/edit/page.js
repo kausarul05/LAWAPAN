@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Trash2, Pencil, X, Upload, Loader, FileText } from "lucide-react";
-import { getDriverDetails, updateDriver, deleteDriver } from "@/components/lib/apiClient";
+import { getDriverDetails, updateDriver, deleteDriver } from "../../../../../../components/lib/apiClient";
 import { toast } from "react-toastify";
 
 export default function EditDriver() {

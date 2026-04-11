@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Trash2, Search, ChevronLeft, ChevronRight, Plus, X, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getTransporterIssues, deleteIssue, createIssue, getTransporterShipments } from '@/components/lib/apiClient';
+import { getTransporterIssues, deleteIssue, createIssue, getTransporterShipments } from '../../../components/lib/apiClient';
 import { toast } from 'react-toastify';
 
 const IssueReported = () => {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Truck, ChevronLeft, ChevronRight, Loader, Search } from 'lucide-react';
-import { getTransporterShipments } from '@/components/lib/apiClient';
+import { getTransporterShipments } from '../../components/lib/apiClient';
 
 // Main Shipments List Component
 const ActiveShipments = () => {

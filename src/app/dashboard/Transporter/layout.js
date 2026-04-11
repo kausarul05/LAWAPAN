@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './transporter.css';
 
 // import Navbar from '@/components/ui/Navbar';
-import TransporterSidebar from '@/components/TransporterAdmin/TransporterSidebar';
+import TransporterSidebar from '../../../components/TransporterAdmin/TransporterSidebar';
 
 
 const geistSans = Geist({

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Search, ChevronLeft, ChevronRight, MapPin, Loader } from "lucide-react";
-import { getAvailableBids } from "@/components/lib/apiClient";
+import { getAvailableBids } from "../../../components/lib/apiClient";
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {

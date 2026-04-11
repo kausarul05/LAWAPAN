@@ -3,7 +3,7 @@
 // PERFECT: Fast submission, proper ID management
 // ============================================
 
-import { API_ENDPOINTS } from "@/config/api";
+import { API_ENDPOINTS } from "../../config/api";
 import apiCall from "./apiClient";
 
 // ============================================

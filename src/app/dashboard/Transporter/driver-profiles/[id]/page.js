@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Pencil, Trash2, FileText, Loader } from "lucide-react";
-import { getDriverDetails, deleteDriver } from "@/components/lib/apiClient";
+import { getDriverDetails, deleteDriver } from "../../../../../components/lib/apiClient";
 import { toast } from "react-toastify";
 
 export default function DriverDetails() {

@@ -1,4 +1,4 @@
-import CompleteShipperProfile from '@/components/CompleteShipperProfile'
+import CompleteShipperProfile from '../../../components/CompleteShipperProfile'
 import React from 'react'
 
 const page = () => {

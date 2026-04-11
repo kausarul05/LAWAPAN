@@ -1,4 +1,4 @@
-import ProfilePageTransporter from '@/components/TransporterAdmin/EditProfileTransporter/ProfilePageTransporter'
+import ProfilePageTransporter from '../../../../../components/TransporterAdmin/EditProfileTransporter/ProfilePageTransporter'
 import React from 'react'
 
 const page = () => {

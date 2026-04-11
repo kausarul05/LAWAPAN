@@ -13,7 +13,7 @@ import {
     X,
     Loader
 } from "lucide-react";
-import { getAvailableBids, getShipmentDetails, placeBid, getTransporterDrivers, getTransporterVehicles } from "@/components/lib/apiClient";
+import { getAvailableBids, getShipmentDetails, placeBid, getTransporterDrivers, getTransporterVehicles } from "../../../../../components/lib/apiClient";
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {

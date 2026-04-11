@@ -1,5 +1,5 @@
-import FAQSection from '@/components/FAQ/FAQSection'
-import FrequentlyAskedQuestions from '@/components/FAQ/FAQSection'
+import FAQSection from '../../components/FAQ/FAQSection'
+// import FrequentlyAskedQuestions from '@/components/FAQ/FAQSection'
 import React from 'react'
 
 const page = () => {

@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, AlertTriangle, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getShipmentDetails, getDriverDetails, getVehicleDetails } from '@/components/lib/apiClient';
+import { getShipmentDetails, getDriverDetails, getVehicleDetails } from '../../../../../../components/lib/apiClient';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 
 // Dynamically import LiveTracking to avoid SSR issues
 const LiveTracking = dynamic(
-  () => import('@/components/lib/LiveTracking'),
+  () => import('../../../../../../components/lib/LiveTracking'),
   { ssr: false, loading: () => (
     <div className="h-full flex items-center justify-center bg-gray-100">
       <Loader className="w-8 h-8 animate-spin text-[#036BB4]" />

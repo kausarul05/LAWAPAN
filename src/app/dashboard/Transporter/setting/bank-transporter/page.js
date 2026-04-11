@@ -1,4 +1,4 @@
-import BankDetailsView from '@/components/TransporterAdmin/BankTransporter/BankTransporterDetails'
+import BankDetailsView from '../../../../../components/TransporterAdmin/BankTransporter/BankTransporterDetails'
 import React from 'react'
 
 const page = () => {

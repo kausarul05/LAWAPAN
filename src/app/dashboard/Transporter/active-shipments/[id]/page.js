@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getShipmentDetails, getDriverDetails, getVehicleDetails } from '@/components/lib/apiClient';
+import { getShipmentDetails, getDriverDetails, getVehicleDetails } from '../../../../../components/lib/apiClient';
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {

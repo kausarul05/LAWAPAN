@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Loader } from 'lucide-react';
-import { getTransporterStats } from '@/components/lib/apiClient';
+import { getTransporterStats } from '../../components/lib/apiClient';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',

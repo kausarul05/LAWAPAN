@@ -1,4 +1,4 @@
-import IssueReported from '@/components/TransporterAdmin/IssueReported/IssueReported'
+import IssueReported from '../../../../components/TransporterAdmin/IssueReported/IssueReported'
 import React from 'react'
 
 const page = () => {

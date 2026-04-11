@@ -1,4 +1,4 @@
-import AvailableBidsPage from '@/components/TransporterAdmin/bids/AvailableBidsPage'
+import AvailableBidsPage from '../../../../components/TransporterAdmin/bids/AvailableBidsPage'
 import React from 'react'
 
 const page = () => {

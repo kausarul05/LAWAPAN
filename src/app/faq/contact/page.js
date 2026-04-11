@@ -1,4 +1,4 @@
-import ContactUs from '@/components/FAQ/ContactUs'
+import ContactUs from '../../../components/FAQ/ContactUs'
 import React from 'react'
 
 const page = () => {

@@ -1,4 +1,4 @@
-import SafelyShipInsurance from '@/components/FAQ/SafelyShipInsurance'
+import SafelyShipInsurance from '../../../components/FAQ/SafelyShipInsurance'
 import React from 'react'
 
 const page = () => {

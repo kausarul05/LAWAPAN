@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Plus, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Loader, X, Upload } from "lucide-react";
-import { getTransporterDrivers, deleteDriver, createDriver } from "@/components/lib/apiClient";
+import { getTransporterDrivers, deleteDriver, createDriver } from "../../../components/lib/apiClient";
 import { toast } from 'react-toastify';
 
 export default function DriverManagement() {

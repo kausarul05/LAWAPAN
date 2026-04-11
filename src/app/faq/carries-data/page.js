@@ -1,4 +1,4 @@
-import YourCarrierData from '@/components/FAQ/YourCarrierData'
+import YourCarrierData from '../../../components/FAQ/YourCarrierData'
 import React from 'react'
 
 const page = () => {
