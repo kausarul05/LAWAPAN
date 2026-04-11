@@ -1,4 +1,4 @@
-import IssuesPage from '@/components/ShipperAdmin/Issues/IssuesPage'
+import IssuesPage from '../../../../components/ShipperAdmin/Issues/IssuesPage'
 import React from 'react'
 
 const page = () => {

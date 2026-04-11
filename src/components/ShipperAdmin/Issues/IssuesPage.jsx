@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Trash2, Search, ChevronLeft, ChevronRight, Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getShipmentIssues, deleteIssue } from '@/components/lib/apiClient';
+import { getShipmentIssues, deleteIssue } from '../../../components/lib/apiClient';
 import { toast } from 'react-toastify';
 
 const IssuesPage = () => {

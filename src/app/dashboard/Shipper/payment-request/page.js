@@ -15,7 +15,7 @@ import {
   Truck as TruckIcon,
   Globe
 } from 'lucide-react';
-import { getShipperShipments } from '../../../../components/lib/apiClient';
+import { getShipperShipments, initializePayment } from '../../../../components/lib/apiClient';
 
 const PaymentRequestPage = () => {
   const router = useRouter();
@@ -109,69 +109,50 @@ const PaymentRequestPage = () => {
     }
   };
 
-  // Load shipments on mount and when page changes
-  useEffect(() => {
-    fetchShipments(currentPage, searchTerm);
-  }, [currentPage]);
-
-  // Handle search with debounce
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchTerm !== undefined) {
-        setCurrentPage(1);
-        fetchShipments(1, searchTerm);
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= pagination.totalPage) {
-      setCurrentPage(page);
-    }
-  };
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleViewDetails = (shipment) => {
-    setSelectedShipment(shipment);
-    setSelectedPaymentMethod('online');
-    setShowPaymentModal(true);
-  };
-
   // Initialize PayDunya payment
   const initializePayDunyaPayment = async () => {
     try {
-      // In a real implementation, you would call your backend API to create a PayDunya invoice
-      const response = await fetch('https://server.lawapantruck.com/api/v1/payment/initialize', {
+      setProcessingPayment(true);
+
+      console.log('💰 Initializing PayDunya payment for amount:', selectedShipment.price);
+
+      // Make sure amount is a number
+      const amount = Number(selectedShipment.price);
+
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error('Invalid amount');
+      }
+
+      // Call the payment API (without extra headers)
+      // Use direct fetch instead of apiCall to avoid extra headers
+      const response = await fetch('https://server.lawapantruck.com/api/v1/pay', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('auth_token')
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          shipment_id: selectedShipment._id,
-          amount: selectedShipment.price,
-          description: `Payment for shipment: ${selectedShipment.shipment_title}`,
-          customer_name: localStorage.getItem('user_name') || 'Customer',
-          customer_email: localStorage.getItem('user_email') || 'customer@example.com'
-        })
+        body: JSON.stringify({ amount: amount })
       });
 
       const data = await response.json();
+      console.log('📦 PayDunya response:', data);
 
-      if (data.success && data.payment_url) {
-        // Redirect to PayDunya payment page
-        window.location.href = data.payment_url;
+      console.log('📦 PayDunya response:', response);
+
+      if (response.success && response.payment_url) {
+        // Open payment URL in new tab or redirect
+        window.open(response.payment_url, '_blank');
+        alert('Payment window opened. Please complete your payment.');
+        setShowPaymentModal(false);
+        setSelectedShipment(null);
       } else {
-        throw new Error(data.message || 'Failed to initialize payment');
+        throw new Error(response.message || response.error || 'Failed to initialize payment');
       }
     } catch (error) {
       console.error('PayDunya initialization error:', error);
-      alert('Failed to initialize payment. Please try again.');
+      alert(error.message || 'Failed to initialize payment. Please try again.');
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
@@ -192,7 +173,6 @@ const PaymentRequestPage = () => {
 
       const paymentMethodName = selectedPaymentMethod === 'bank' ? 'Bank Transfer' : 'Cash on Delivery';
 
-      // In a real app, you would call an API to record the payment request
       console.log(`Payment initiated via ${paymentMethodName} for shipment:`, selectedShipment._id);
 
       alert(`${paymentMethodName} payment initiated for "${selectedShipment.shipment_title}". Our team will contact you shortly to confirm.`);
@@ -207,6 +187,22 @@ const PaymentRequestPage = () => {
     } finally {
       setProcessingPayment(false);
     }
+  };
+
+  const handleViewDetails = (shipment) => {
+    setSelectedShipment(shipment);
+    setSelectedPaymentMethod('online');
+    setShowPaymentModal(true);
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= pagination.totalPage) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const formatPrice = (price) => {
@@ -262,6 +258,23 @@ const PaymentRequestPage = () => {
     }
     return pages;
   };
+
+  // Load shipments on mount and when page changes
+  useEffect(() => {
+    fetchShipments(currentPage, searchTerm);
+  }, [currentPage]);
+
+  // Handle search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== undefined) {
+        setCurrentPage(1);
+        fetchShipments(1, searchTerm);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   if (loading && shipments.length === 0) {
     return (
@@ -405,8 +418,8 @@ const PaymentRequestPage = () => {
                       key={idx}
                       onClick={() => handlePageChange(page)}
                       className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${page === currentPage
-                        ? 'bg-[#036BB4] text-white'
-                        : 'border border-gray-300 hover:bg-gray-50'
+                          ? 'bg-[#036BB4] text-white'
+                          : 'border border-gray-300 hover:bg-gray-50'
                         }`}
                     >
                       {page}
@@ -463,19 +476,19 @@ const PaymentRequestPage = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Shipment ID:</span>
-                      <span className="font-mono text-black">#{selectedShipment._id?.slice(-8)}</span>
+                      <span className="font-mono">#{selectedShipment._id?.slice(-8)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Title:</span>
-                      <span className="font-medium text-black">{selectedShipment.shipment_title}</span>
+                      <span className="font-medium">{selectedShipment.shipment_title}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Route:</span>
-                      <span className="text-black">{selectedShipment.pickup_address?.split(',')[0]} → {selectedShipment.delivery_address?.split(',')[0]}</span>
+                      <span>{selectedShipment.pickup_address?.split(',')[0]} → {selectedShipment.delivery_address?.split(',')[0]}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Weight:</span>
-                      <span className="text-black">{selectedShipment.weight}</span>
+                      <span>{selectedShipment.weight}</span>
                     </div>
                   </div>
                 </div>
@@ -494,9 +507,9 @@ const PaymentRequestPage = () => {
                   <div className="space-y-3">
                     {/* Online Payment - PayDunya */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'online'
-                        ? 'border-[#036BB4] bg-blue-50'
-                        : 'border-gray-200 hover:border-[#036BB4]'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'online'
+                          ? 'border-[#036BB4] bg-blue-50'
+                          : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
                       onClick={() => setSelectedPaymentMethod('online')}
                     >
@@ -518,9 +531,9 @@ const PaymentRequestPage = () => {
 
                     {/* Bank Transfer */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'bank'
-                        ? 'border-[#036BB4] bg-blue-50'
-                        : 'border-gray-200 hover:border-[#036BB4]'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'bank'
+                          ? 'border-[#036BB4] bg-blue-50'
+                          : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
                       onClick={() => setSelectedPaymentMethod('bank')}
                     >
@@ -542,9 +555,9 @@ const PaymentRequestPage = () => {
 
                     {/* Cash on Delivery */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'cod'
-                        ? 'border-[#036BB4] bg-blue-50'
-                        : 'border-gray-200 hover:border-[#036BB4]'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'cod'
+                          ? 'border-[#036BB4] bg-blue-50'
+                          : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
                       onClick={() => setSelectedPaymentMethod('cod')}
                     >
@@ -573,23 +586,23 @@ const PaymentRequestPage = () => {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-500">Bank Name:</span>
-                        <span className="font-medium text-black">{bankDetails.bankName}</span>
+                        <span className="font-medium">{bankDetails.bankName}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Account Name:</span>
-                        <span className="font-medium text-black">{bankDetails.accountName}</span>
+                        <span className="font-medium">{bankDetails.accountName}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Account Number:</span>
-                        <span className="font-mono text-black">{bankDetails.accountNumber}</span>
+                        <span className="font-mono">{bankDetails.accountNumber}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">SWIFT Code:</span>
-                        <span className="font-mono text-black">{bankDetails.swiftCode}</span>
+                        <span className="font-mono">{bankDetails.swiftCode}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Country:</span>
-                        <span className="font-medium text-black">{bankDetails.country}</span>
+                        <span className="font-medium">{bankDetails.country}</span>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-3 pt-2 border-t border-gray-200">

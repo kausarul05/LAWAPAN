@@ -790,8 +790,30 @@ export const getTransporterShipments = async (transporterId, page = 1, limit = 1
 };
 
 // ============================================
-// VEHICLE FUNCTIONS (for Transporter)
+// PAYMENT FUNCTIONS
 // ============================================
+
+/**
+ * Initialize PayDunya payment
+ */
+export const initializePayment = async (amount) => {
+  console.log('💰 Initializing payment for amount:', amount);
+
+  // Use direct fetch instead of apiCall to avoid extra headers
+  const response = await fetch('https://server.lawapantruck.com/api/v1/pay', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({ amount: amount })
+  });
+
+  const data = await response.json();
+  console.log('📦 PayDunya response:', data);
+
+  return data;
+};
 
 // ============================================
 // VEHICLE FUNCTIONS (for Transporter)
@@ -802,9 +824,9 @@ export const getTransporterShipments = async (transporterId, page = 1, limit = 1
  */
 export const getTransporterVehicles = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
   console.log('🚛 Fetching vehicles for transporter:', transporterId);
-  
+
   const url = `${API_ENDPOINTS.VEHICLE.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
-  
+
   const response = await apiCall(
     url,
     'GET',
@@ -812,7 +834,7 @@ export const getTransporterVehicles = async (transporterId, page = 1, limit = 10
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -821,7 +843,7 @@ export const getTransporterVehicles = async (transporterId, page = 1, limit = 10
  */
 export const getVehicleDetails = async (vehicleId) => {
   console.log('🔍 Fetching vehicle details for ID:', vehicleId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.VEHICLE.GET_BY_ID(vehicleId),
     'GET',
@@ -829,7 +851,7 @@ export const getVehicleDetails = async (vehicleId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -838,7 +860,7 @@ export const getVehicleDetails = async (vehicleId) => {
  */
 export const createVehicle = async (formData) => {
   console.log('🚛 Creating new vehicle');
-  
+
   const response = await apiCall(
     API_ENDPOINTS.VEHICLE.CREATE,
     'POST',
@@ -846,7 +868,7 @@ export const createVehicle = async (formData) => {
     {},
     true // isFormData = true for file uploads
   );
-  
+
   return response;
 };
 
@@ -855,7 +877,7 @@ export const createVehicle = async (formData) => {
  */
 export const updateVehicle = async (vehicleId, formData) => {
   console.log('📝 Updating vehicle:', vehicleId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.VEHICLE.UPDATE(vehicleId),
     'PATCH',
@@ -863,7 +885,7 @@ export const updateVehicle = async (vehicleId, formData) => {
     {},
     true // isFormData = true for file uploads
   );
-  
+
   return response;
 };
 
@@ -872,7 +894,7 @@ export const updateVehicle = async (vehicleId, formData) => {
  */
 export const deleteVehicle = async (vehicleId) => {
   console.log('🗑️ Deleting vehicle:', vehicleId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.VEHICLE.DELETE(vehicleId),
     'DELETE',
@@ -880,7 +902,7 @@ export const deleteVehicle = async (vehicleId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -893,9 +915,9 @@ export const deleteVehicle = async (vehicleId) => {
  */
 export const getTransporterDrivers = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
   console.log('👤 Fetching drivers for transporter:', transporterId);
-  
+
   const url = `${API_ENDPOINTS.DRIVER.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
-  
+
   const response = await apiCall(
     url,
     'GET',
@@ -903,7 +925,7 @@ export const getTransporterDrivers = async (transporterId, page = 1, limit = 10,
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -912,7 +934,7 @@ export const getTransporterDrivers = async (transporterId, page = 1, limit = 10,
  */
 export const getDriverDetails = async (driverId) => {
   console.log('🔍 Fetching driver details for ID:', driverId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.DRIVER.GET_BY_ID(driverId),
     'GET',
@@ -920,7 +942,7 @@ export const getDriverDetails = async (driverId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -929,7 +951,7 @@ export const getDriverDetails = async (driverId) => {
  */
 export const createDriver = async (formData) => {
   console.log('👤 Creating new driver');
-  
+
   const response = await apiCall(
     API_ENDPOINTS.DRIVER.CREATE,
     'POST',
@@ -937,7 +959,7 @@ export const createDriver = async (formData) => {
     {},
     true // isFormData = true for file uploads
   );
-  
+
   return response;
 };
 
@@ -946,7 +968,7 @@ export const createDriver = async (formData) => {
  */
 export const updateDriver = async (driverId, formData) => {
   console.log('📝 Updating driver:', driverId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.DRIVER.UPDATE(driverId),
     'PATCH', // Using PATCH method as specified
@@ -954,7 +976,7 @@ export const updateDriver = async (driverId, formData) => {
     {},
     true // isFormData = true for file uploads
   );
-  
+
   return response;
 };
 
@@ -963,7 +985,7 @@ export const updateDriver = async (driverId, formData) => {
  */
 export const deleteDriver = async (driverId) => {
   console.log('🗑️ Deleting driver:', driverId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.DRIVER.DELETE(driverId),
     'DELETE',
@@ -971,7 +993,7 @@ export const deleteDriver = async (driverId) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -1262,9 +1284,9 @@ export const withdrawBid = async (bidId) => {
  */
 export const getTransporterIssues = async (transporterId, page = 1, limit = 10, searchTerm = '') => {
   console.log('📋 Fetching issues for transporter:', transporterId);
-  
+
   const url = `${API_ENDPOINTS.ISSUES.GET_BY_TRANSPORTER(transporterId)}?page=${page}&limit=${limit}${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ''}`;
-  
+
   const response = await apiCall(
     url,
     'GET',
@@ -1272,7 +1294,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -1281,7 +1303,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
  */
 // export const createIssue = async (issueData) => {
 //   console.log('📝 Creating new issue:', issueData);
-  
+
 //   const response = await apiCall(
 //     API_ENDPOINTS.ISSUES.CREATE,
 //     'POST',
@@ -1289,7 +1311,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
 //     {},
 //     false
 //   );
-  
+
 //   return response;
 // };
 
@@ -1298,7 +1320,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
  */
 // export const getIssueDetails = async (issueId) => {
 //   console.log('🔍 Fetching issue details for ID:', issueId);
-  
+
 //   const response = await apiCall(
 //     API_ENDPOINTS.ISSUES.GET_BY_ID(issueId),
 //     'GET',
@@ -1306,7 +1328,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
 //     {},
 //     false
 //   );
-  
+
 //   return response;
 // };
 
@@ -1315,7 +1337,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
  */
 // export const updateIssue = async (issueId, issueData) => {
 //   console.log('📝 Updating issue:', issueId);
-  
+
 //   const response = await apiCall(
 //     API_ENDPOINTS.ISSUES.UPDATE(issueId),
 //     'PUT',
@@ -1323,7 +1345,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
 //     {},
 //     false
 //   );
-  
+
 //   return response;
 // };
 
@@ -1332,7 +1354,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
  */
 // export const deleteIssue = async (issueId) => {
 //   console.log('🗑️ Deleting issue:', issueId);
-  
+
 //   const response = await apiCall(
 //     API_ENDPOINTS.ISSUES.DELETE(issueId),
 //     'DELETE',
@@ -1340,7 +1362,7 @@ export const getTransporterIssues = async (transporterId, page = 1, limit = 10, 
 //     {},
 //     false
 //   );
-  
+
 //   return response;
 // };
 
