@@ -23,8 +23,8 @@ export const API_ENDPOINTS = {
   // Shipper Profile Endpoints
   SHIPPER: {
     COMPLETE_PROFILE: `${API_BASE_URL}/shipper/complete-shipper-profile`,
-    GET_PROFILE: `${API_BASE_URL}/shipper/profile`,
-    UPDATE_PROFILE: `${API_BASE_URL}/shipper/profile`,
+    GET_PROFILE: `${API_BASE_URL}/setting/shipper-profile`,
+    UPDATE_PROFILE: `${API_BASE_URL}/setting/shipper-profile`,
   },
 
   // Transporter Profile Endpoints

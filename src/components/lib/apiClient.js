@@ -149,6 +149,116 @@ const extractUserId = (data) => {
 };
 
 // ============================================
+// SHIPPER PROFILE FUNCTIONS
+// ============================================
+
+/**
+ * Get shipper profile
+ */
+export const getShipperProfile = async () => {
+  console.log('👤 Fetching shipper profile');
+
+  const response = await apiCall(
+    API_ENDPOINTS.SHIPPER.GET_PROFILE,
+    'GET',
+    null,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Update shipper profile
+ */
+export const updateShipperProfile = async (profileData) => {
+  console.log('📝 Updating shipper profile:', profileData);
+
+  const response = await apiCall(
+    API_ENDPOINTS.SHIPPER.UPDATE_PROFILE,
+    'PUT',
+    profileData,
+    {},
+    false
+  );
+
+  return response;
+};
+
+// ============================================
+// BANK DETAILS FUNCTIONS
+// ============================================
+
+/**
+ * Get bank details for the logged-in user
+ */
+export const getBankDetails = async () => {
+  console.log('🏦 Fetching bank details');
+  
+  const response = await apiCall(
+    API_ENDPOINTS.BANK.GET,
+    'GET',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Create new bank details
+ */
+export const createBankDetails = async (bankData) => {
+  console.log('💰 Creating bank details:', bankData);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.BANK.CREATE,
+    'POST',
+    bankData,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Update bank details
+ */
+export const updateBankDetails = async (bankId, bankData) => {
+  console.log('📝 Updating bank details:', bankId, bankData);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.BANK.UPDATE(bankId),
+    'PUT',
+    bankData,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+/**
+ * Delete bank details
+ */
+export const deleteBankDetails = async (bankId) => {
+  console.log('🗑️ Deleting bank details:', bankId);
+  
+  const response = await apiCall(
+    API_ENDPOINTS.BANK.DELETE(bankId),
+    'DELETE',
+    null,
+    {},
+    false
+  );
+  
+  return response;
+};
+
+// ============================================
 // MAIN API CALL FUNCTION
 // ============================================
 

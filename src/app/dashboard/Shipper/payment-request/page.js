@@ -15,7 +15,7 @@ import {
   Truck as TruckIcon,
   Globe
 } from 'lucide-react';
-import { getShipperShipments, initializePayment } from '../../../../components/lib/apiClient';
+import { getShipperShipments } from '../../../../components/lib/apiClient';
 
 const PaymentRequestPage = () => {
   const router = useRouter();
@@ -123,30 +123,29 @@ const PaymentRequestPage = () => {
         throw new Error('Invalid amount');
       }
 
-      // Call the payment API (without extra headers)
-      // Use direct fetch instead of apiCall to avoid extra headers
+      // Call the payment API with proper headers
       const response = await fetch('https://server.lawapantruck.com/api/v1/pay', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
-        body: JSON.stringify({ amount: amount })
+        body: JSON.stringify({ amount: amount }),
       });
 
+      console.log('📦 Response status:', response.status);
+      
+      // Parse the JSON response
       const data = await response.json();
-      console.log('📦 PayDunya response:', data);
+      console.log('📦 PayDunya response data:', data);
 
-      console.log('📦 PayDunya response:', response);
-
-      if (response.success && response.payment_url) {
-        // Open payment URL in new tab or redirect
-        window.open(response.payment_url, '_blank');
+      if (data.success && data.payment_url) {
+        // Open payment URL in new tab
+        window.open(data.payment_url, '_blank');
         alert('Payment window opened. Please complete your payment.');
         setShowPaymentModal(false);
         setSelectedShipment(null);
       } else {
-        throw new Error(response.message || response.error || 'Failed to initialize payment');
+        throw new Error(data.message || data.error || 'Failed to initialize payment');
       }
     } catch (error) {
       console.error('PayDunya initialization error:', error);
@@ -476,19 +475,19 @@ const PaymentRequestPage = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Shipment ID:</span>
-                      <span className="font-mono">#{selectedShipment._id?.slice(-8)}</span>
+                      <span className="font-mono text-black">#{selectedShipment._id?.slice(-8)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Title:</span>
-                      <span className="font-medium">{selectedShipment.shipment_title}</span>
+                      <span className="font-medium text-black">{selectedShipment.shipment_title}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Route:</span>
-                      <span>{selectedShipment.pickup_address?.split(',')[0]} → {selectedShipment.delivery_address?.split(',')[0]}</span>
+                      <span className="text-black">{selectedShipment.pickup_address?.split(',')[0]} → {selectedShipment.delivery_address?.split(',')[0]}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Weight:</span>
-                      <span>{selectedShipment.weight}</span>
+                      <span className="text-black">{selectedShipment.weight}</span>
                     </div>
                   </div>
                 </div>
@@ -507,7 +506,7 @@ const PaymentRequestPage = () => {
                   <div className="space-y-3">
                     {/* Online Payment - PayDunya */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'online'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'online'
                           ? 'border-[#036BB4] bg-blue-50'
                           : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
@@ -531,7 +530,7 @@ const PaymentRequestPage = () => {
 
                     {/* Bank Transfer */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'bank'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'bank'
                           ? 'border-[#036BB4] bg-blue-50'
                           : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
@@ -555,7 +554,7 @@ const PaymentRequestPage = () => {
 
                     {/* Cash on Delivery */}
                     <div
-                      className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPaymentMethod === 'cod'
+                      className={`border rounded-lg p-4 cursor-pointer transition-all text-black ${selectedPaymentMethod === 'cod'
                           ? 'border-[#036BB4] bg-blue-50'
                           : 'border-gray-200 hover:border-[#036BB4]'
                         }`}
@@ -571,7 +570,7 @@ const PaymentRequestPage = () => {
                         />
                         <TruckIcon className="w-5 h-5 text-[#036BB4]" />
                         <div>
-                          <span className="font-medium">Cash on Delivery</span>
+                          <span className="font-medium">Cash</span>
                           <p className="text-xs text-gray-500">Pay when your shipment is delivered</p>
                         </div>
                       </div>
@@ -586,23 +585,23 @@ const PaymentRequestPage = () => {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-500">Bank Name:</span>
-                        <span className="font-medium">{bankDetails.bankName}</span>
+                        <span className="font-medium text-black">{bankDetails.bankName}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Account Name:</span>
-                        <span className="font-medium">{bankDetails.accountName}</span>
+                        <span className="font-medium text-black">{bankDetails.accountName}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Account Number:</span>
-                        <span className="font-mono">{bankDetails.accountNumber}</span>
+                        <span className="font-mono text-black">{bankDetails.accountNumber}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">SWIFT Code:</span>
-                        <span className="font-mono">{bankDetails.swiftCode}</span>
+                        <span className="font-mono text-black">{bankDetails.swiftCode}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-500">Country:</span>
-                        <span className="font-medium">{bankDetails.country}</span>
+                        <span className="font-medium text-black">{bankDetails.country}</span>
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 mt-3 pt-2 border-t border-gray-200">
