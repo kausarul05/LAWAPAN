@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   CreditCard,
+  Receipt,
 } from "lucide-react";
 
 const navItems = [
@@ -23,12 +24,12 @@ const navItems = [
   { name: "My Shipments", href: "/dashboard/Shipper/shipments", icon: Truck },
   { name: "Invoices", href: "/dashboard/Shipper/invoices", icon: FileText },
   { name: "Payment Request", href: "/dashboard/Shipper/payment-request", icon: CreditCard },
+  { name: "Admin Payment Requests", href: "/dashboard/Shipper/admin-payment-requests", icon: Receipt },
   { name: "Issue reported", href: "/dashboard/Shipper/issues", icon: AlertCircle },
 ];
 
 const settingsDropdown = [
   { name: "Edit Profile", href: "/dashboard/Shipper/settings/profile", icon: User },
-  // { name: "Change Password", href: "/dashboard/Shipper/settings/password", icon: Lock },
   { name: "Bank Details", href: "/dashboard/Shipper/settings/bank", icon: Wallet },
 ];
 
