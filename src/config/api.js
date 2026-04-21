@@ -16,15 +16,15 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
     LOGIN: `${API_BASE_URL}/auth/sign-in`, // Alias
     SEND_OTP: `${API_BASE_URL}/auth/send-otp`,
-    CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password`,
+    CHANGE_PASSWORD: `${API_BASE_URL}/shipper/change-password`,
     VERIFY_EMAIL: `${API_BASE_URL}/auth/verify-email`,
   },
 
   // Shipper Profile Endpoints
   SHIPPER: {
     COMPLETE_PROFILE: `${API_BASE_URL}/shipper/complete-shipper-profile`,
-    GET_PROFILE: `${API_BASE_URL}/setting/shipper-profile`,
-    UPDATE_PROFILE: `${API_BASE_URL}/setting/shipper-profile`,
+    GET_PROFILE: (shipperId) => `${API_BASE_URL}/shipper/${shipperId}`,
+    UPDATE_PROFILE: () => `${API_BASE_URL}/setting/shipper-profile`,
   },
 
   // Transporter Profile Endpoints
@@ -91,6 +91,14 @@ export const API_ENDPOINTS = {
   // Payment Endpoints
   PAYMENT: {
     INITIALIZE: `${API_BASE_URL}/pay`,
+  },
+
+  // Bank Endpoints
+  BANK: {
+    GET: `${API_BASE_URL}/bank/shipper`,
+    CREATE: `${API_BASE_URL}/bank/shipper`,
+    UPDATE: (id) => `${API_BASE_URL}/bank/shipper/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/bank/shipper/${id}`,
   }
 };
 

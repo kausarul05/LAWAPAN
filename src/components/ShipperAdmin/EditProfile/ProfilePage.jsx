@@ -43,9 +43,9 @@ export default function ProfilePage() {
         throw new Error('Shipper ID not found. Please login again.');
       }
 
-      console.log('🔍 Fetching shipper profile...');
+      console.log('🔍 Fetching shipper profile for ID:', shipperId);
       
-      const response = await getShipperProfile();
+      const response = await getShipperProfile(shipperId);
       
       console.log('📦 Profile response:', response);
 
@@ -84,13 +84,18 @@ export default function ProfilePage() {
     try {
       setSaving(true);
       
+      const shipperId = getShipperId();
+      if (!shipperId) {
+        throw new Error('Shipper ID not found. Please login again.');
+      }
+      
       const updateData = {
         shipper_name: formData.fullName
       };
       
-      console.log('📝 Updating profile:', updateData);
+      console.log('📝 Updating profile for ID:', shipperId, updateData);
       
-      const response = await updateShipperProfile(updateData);
+      const response = await updateShipperProfile();
       
       console.log('✅ Update response:', response);
       
@@ -217,7 +222,7 @@ export default function ProfilePage() {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100"
+                    className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-black leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100"
                     placeholder="Enter your full name"
                     required
                   />

@@ -155,11 +155,12 @@ const extractUserId = (data) => {
 /**
  * Get shipper profile
  */
-export const getShipperProfile = async () => {
-  console.log('👤 Fetching shipper profile');
+export const getShipperProfile = async (shipperId) => {
+  console.log('👤 Fetching shipper profile for ID:', shipperId);
 
   const response = await apiCall(
-    API_ENDPOINTS.SHIPPER.GET_PROFILE,
+    // `${API_BASE_URL}/shipper/${shipperId}`,
+    API_ENDPOINTS.SHIPPER.GET_PROFILE(shipperId),
     'GET',
     null,
     {},
@@ -172,13 +173,30 @@ export const getShipperProfile = async () => {
 /**
  * Update shipper profile
  */
-export const updateShipperProfile = async (profileData) => {
-  console.log('📝 Updating shipper profile:', profileData);
+export const updateShipperProfile = async () => {
+  console.log('📝 Updating shipper profile');
 
   const response = await apiCall(
     API_ENDPOINTS.SHIPPER.UPDATE_PROFILE,
-    'PUT',
+    'PATCH',
     profileData,
+    {},
+    false
+  );
+
+  return response;
+};
+
+/**
+ * Change shipper password
+ */
+export const changeShipperPassword = async (passwordData) => {
+  console.log('🔐 Changing shipper password');
+
+  const response = await apiCall(
+    API_ENDPOINTS.AUTH.CHANGE_PASSWORD,
+    'PATCH',
+    passwordData,
     {},
     false
   );
@@ -195,7 +213,7 @@ export const updateShipperProfile = async (profileData) => {
  */
 export const getBankDetails = async () => {
   console.log('🏦 Fetching bank details');
-  
+
   const response = await apiCall(
     API_ENDPOINTS.BANK.GET,
     'GET',
@@ -203,7 +221,7 @@ export const getBankDetails = async () => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -212,7 +230,7 @@ export const getBankDetails = async () => {
  */
 export const createBankDetails = async (bankData) => {
   console.log('💰 Creating bank details:', bankData);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.BANK.CREATE,
     'POST',
@@ -220,7 +238,7 @@ export const createBankDetails = async (bankData) => {
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -229,15 +247,15 @@ export const createBankDetails = async (bankData) => {
  */
 export const updateBankDetails = async (bankId, bankData) => {
   console.log('📝 Updating bank details:', bankId, bankData);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.BANK.UPDATE(bankId),
-    'PUT',
+    'PATCH',
     bankData,
     {},
     false
   );
-  
+
   return response;
 };
 
@@ -246,7 +264,7 @@ export const updateBankDetails = async (bankId, bankData) => {
  */
 export const deleteBankDetails = async (bankId) => {
   console.log('🗑️ Deleting bank details:', bankId);
-  
+
   const response = await apiCall(
     API_ENDPOINTS.BANK.DELETE(bankId),
     'DELETE',
@@ -254,7 +272,7 @@ export const deleteBankDetails = async (bankId) => {
     {},
     false
   );
-  
+
   return response;
 };
 

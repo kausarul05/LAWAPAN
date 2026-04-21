@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Truck, ChevronLeft, ChevronRight, Loader, Search } from 'lucide-react';
 import { getTransporterShipments } from '../../components/lib/apiClient';
+import { toast } from 'react-toastify';
 
 // Main Shipments List Component
 const ActiveShipments = () => {
@@ -18,6 +19,7 @@ const ActiveShipments = () => {
     total: 0,
     totalPage: 0
   });
+  const [requestingPayment, setRequestingPayment] = useState(null);
 
   // Get transporter ID from localStorage
   const getTransporterId = () => {
@@ -85,6 +87,30 @@ const ActiveShipments = () => {
     }
   };
 
+  // Handle payment request
+  const handlePaymentRequest = async (shipmentId, shipmentTitle) => {
+    // if (!window.confirm(`Request payment for "${shipmentTitle}"?`)) {
+    //   return;
+    // }
+
+    try {
+      setRequestingPayment(shipmentId);
+      
+      // Here you would make an API call to send payment request to admin
+      // For now, we'll simulate the API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log(`Payment request sent for shipment: ${shipmentId}`);
+      
+      toast.success(`Payment request for "${shipmentTitle}" has been sent to the admin. You will be notified once processed.`);
+    } catch (error) {
+      console.error('Error sending payment request:', error);
+      toast.error('Failed to send payment request. Please try again.');
+    } finally {
+      setRequestingPayment(null);
+    }
+  };
+
   // Helper function to determine status color
   const getStatusColor = (status) => {
     const statusLower = (status || '').toLowerCase();
@@ -102,6 +128,12 @@ const ActiveShipments = () => {
   const formatStatus = (status) => {
     if (!status) return 'Unknown';
     return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  };
+
+  // Format price
+  const formatPrice = (price) => {
+    if (!price) return '0';
+    return new Intl.NumberFormat('en-US').format(price);
   };
 
   // Load shipments on component mount and when page changes
@@ -227,9 +259,10 @@ const ActiveShipments = () => {
               <th className="text-left py-3 px-6 text-sm font-semibold">Shipment ID</th>
               <th className="text-left py-3 px-6 text-sm font-semibold">Shipment Title</th>
               <th className="text-left py-3 px-6 text-sm font-semibold">Pickup – Delivery</th>
+              <th className="text-left py-3 px-6 text-sm font-semibold">Amount</th>
               <th className="text-left py-3 px-6 text-sm font-semibold">Status</th>
-              <th className="text-left py-3 px-6 text-sm font-semibold">Action</th>
-             </tr>
+              <th className="text-center py-3 px-6 text-sm font-semibold">Action</th>
+            </tr>
           </thead>
           <tbody>
             {shipments.length > 0 ? (
@@ -244,6 +277,9 @@ const ActiveShipments = () => {
                   <td className="py-4 px-6 text-sm text-black">
                     {shipment.route}
                   </td>
+                  <td className="py-4 px-6 text-sm font-semibold text-green-600">
+                    ${formatPrice(shipment.price)}
+                  </td>
                   <td className="py-4 px-6">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                       shipment.statusColor === 'orange' 
@@ -256,20 +292,31 @@ const ActiveShipments = () => {
                     </span>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => handleViewDetail(shipment.id)}
-                        className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center hover:bg-purple-200 transition-colors"
+                        className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition-colors"
                         title="View Details"
                       >
-                        <Eye className="w-4 h-4 text-purple-600" />
+                        <Eye className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleViewTracking(shipment.id)}
-                        className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center hover:bg-blue-200 transition-colors"
+                        className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
                         title="Track Shipment"
                       >
-                        <Truck className="w-4 h-4 text-blue-600" />
+                        <Truck className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handlePaymentRequest(shipment.id, shipment.title)}
+                        disabled={requestingPayment === shipment.id}
+                        className="px-3 py-2 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {requestingPayment === shipment.id ? (
+                          <Loader className="w-4 h-4 animate-spin inline mr-1" />
+                        ) : (
+                          'Request Payment'
+                        )}
                       </button>
                     </div>
                   </td>
@@ -277,7 +324,7 @@ const ActiveShipments = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-gray-500">
+                <td colSpan="6" className="py-8 text-center text-gray-500">
                   {searchTerm ? 'No shipments found matching your search.' : 'No active shipments found.'}
                 </td>
               </tr>

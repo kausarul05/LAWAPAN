@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { Loader } from "lucide-react";
+import { changeShipperPassword } from "../../../components/lib/apiClient";
 
 export default function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -8,10 +10,11 @@ export default function ChangePasswordForm() {
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // 'success' or 'error'
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(""); // Clear previous messages
+    setMessage("");
     setMessageType("");
 
     if (newPassword !== confirmedPassword) {
@@ -20,75 +23,97 @@ export default function ChangePasswordForm() {
       return;
     }
 
-    // In a real application, you would send this data to your backend API
-    // For demonstration purposes, we'll simulate a successful change
-    setTimeout(() => {
-      setMessage("Password changed successfully!");
-      setMessageType("success");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmedPassword("");
-    }, 1000);
+    if (newPassword.length < 6) {
+      setMessage("New password must be at least 6 characters long.");
+      setMessageType("error");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      const response = await changeShipperPassword({
+        current_password: currentPassword,
+        new_password: newPassword,
+        // confirm_password: confirmedPassword
+      });
+      
+      console.log('📦 Password change response:', response);
+      
+      if (response.success) {
+        setMessage("Password changed successfully!");
+        setMessageType("success");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmedPassword("");
+      } else {
+        throw new Error(response.message || 'Failed to change password');
+      }
+    } catch (err) {
+      console.error('Error changing password:', err);
+      setMessage(err.message || 'Failed to change password. Please try again.');
+      setMessageType("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-6 flex flex-col items-center">
-      {" "}
-      {/* Added flex-col and items-center to center form fields */}
       <div className="mb-4 w-full max-w-[982px]">
-        {" "}
-        {/* Constrain div width for centering */}
         <label
           htmlFor="currentPassword"
-          className="block text-black text-sm font-bold mb-2" // Changed text to black
+          className="block text-black text-sm font-bold mb-2"
         >
           Current Password
         </label>
         <input
           type="password"
           id="currentPassword"
-          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100" // Changed text and background of input
+          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-black leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
+      
       <div className="mb-4 w-full max-w-[982px]">
-        {" "}
-        {/* Constrain div width for centering */}
         <label
           htmlFor="newPassword"
-          className="block text-black text-sm font-bold mb-2" // Changed text to black
+          className="block text-black text-sm font-bold mb-2"
         >
           New Password
         </label>
         <input
           type="password"
           id="newPassword"
-          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100" // Changed text and background of input
+          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-black leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
+      
       <div className="mb-6 w-full max-w-[982px]">
-        {" "}
-        {/* Constrain div width for centering */}
         <label
           htmlFor="confirmedPassword"
-          className="block text-black text-sm font-bold mb-2" // Changed text to black
+          className="block text-black text-sm font-bold mb-2"
         >
-          Confirmed Password
+          Confirm New Password
         </label>
         <input
           type="password"
           id="confirmedPassword"
-          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100" // Changed text and background of input
+          className="shadow appearance-none rounded w-full h-[50px] py-3 px-4 text-black leading-tight focus:outline-none focus:shadow-outline border border-[#C3C3C3] bg-gray-100"
           value={confirmedPassword}
           onChange={(e) => setConfirmedPassword(e.target.value)}
           required
+          disabled={loading}
         />
       </div>
+      
       {message && (
         <p
           className={`text-center mb-4 ${
@@ -98,15 +123,24 @@ export default function ChangePasswordForm() {
           {message}
         </p>
       )}
+      
       <div className="flex items-center justify-center mt-6 md:w-[982px]">
         <button
           type="submit"
-          className="text-white font-bold w-full py-3 px-4 rounded-[4px] focus:outline-none focus:shadow-outline transition-colors"
+          disabled={loading}
+          className="text-white font-bold w-full py-3 px-4 rounded-[4px] focus:outline-none focus:shadow-outline transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           style={{backgroundColor: '#036BB4'}}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#025191'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#036BB4'}
+          onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#025191')}
+          onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#036BB4')}
         >
-          Save Changes
+          {loading ? (
+            <>
+              <Loader className="w-4 h-4 animate-spin" />
+              Changing...
+            </>
+          ) : (
+            'Save Changes'
+          )}
         </button>
       </div>
     </form>

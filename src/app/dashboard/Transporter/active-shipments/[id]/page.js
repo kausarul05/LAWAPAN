@@ -32,16 +32,16 @@ const ActiveShipmentDetail = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('🔍 Fetching shipment details for ID:', id);
-      
+
       const response = await getShipmentDetails(id);
-      
+
       console.log('📦 Shipment details response:', response);
 
       if (response.success && response.data) {
         const shipmentData = response.data.shipment || response.data;
-        
+
         // Transform the data
         const transformedShipment = {
           id: shipmentData._id,
@@ -64,14 +64,14 @@ const ActiveShipmentDetail = () => {
           createdAt: shipmentData.createdAt,
           updatedAt: shipmentData.updatedAt
         };
-        
+
         setShipment(transformedShipment);
-        
+
         // Fetch driver details if available
         if (transformedShipment.driver_id) {
           fetchDriverDetails(transformedShipment.driver_id);
         }
-        
+
         // Fetch vehicle details if available
         if (transformedShipment.vehicle_id) {
           fetchVehicleDetails(transformedShipment.vehicle_id);
@@ -82,7 +82,7 @@ const ActiveShipmentDetail = () => {
     } catch (err) {
       console.error('❌ Error fetching shipment details:', err);
       setError(err.message);
-      
+
       // If unauthorized, redirect to login
       if (err.message.includes('Session expired') || err.message.includes('401')) {
         router.push('/login');
@@ -97,11 +97,11 @@ const ActiveShipmentDetail = () => {
     try {
       setLoadingDriver(true);
       console.log('👤 Fetching driver details for ID:', driverId);
-      
+
       const response = await getDriverDetails(driverId);
-      
+
       console.log('📦 Driver details:', response);
-      
+
       if (response.success && response.data) {
         setDriver({
           name: response.data.driver_name,
@@ -123,11 +123,11 @@ const ActiveShipmentDetail = () => {
     try {
       setLoadingVehicle(true);
       console.log('🚛 Fetching vehicle details for ID:', vehicleId);
-      
+
       const response = await getVehicleDetails(vehicleId);
-      
+
       console.log('📦 Vehicle details:', response);
-      
+
       if (response.success && response.data) {
         setVehicle({
           type: response.data.vehicle_type,
@@ -157,7 +157,7 @@ const ActiveShipmentDetail = () => {
 
   const nextImage = () => {
     if (shipment?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === shipment.images.length - 1 ? 0 : prev + 1
       );
     }
@@ -165,7 +165,7 @@ const ActiveShipmentDetail = () => {
 
   const prevImage = () => {
     if (shipment?.images) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? shipment.images.length - 1 : prev - 1
       );
     }
@@ -235,14 +235,31 @@ const ActiveShipmentDetail = () => {
   return (
     <div className="bg-gray-50 min-h-screen p-6">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className='flex justify-between'>
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={handleBack}
+            className="w-10 h-10 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+          >
+            <ArrowLeft className="w-5 h-5 text-black" />
+          </button>
+          <h1 className="text-xl font-semibold text-black">Shipment Detail</h1>
+        </div>
+
         <button
-          onClick={handleBack}
-          className="w-10 h-10 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+          // onClick={handlePaymentRequest}
+          // disabled={requestingPayment}
+          className="h-10 px-4 cursor-pointer bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
-          <ArrowLeft className="w-5 h-5 text-black" />
+          {/* {requestingPayment ? (
+            <>
+              <Loader className="w-4 h-4 animate-spin" />
+              Processing...
+            </> */}
+          {/* ) : ( */}
+            Request Payment
+          {/* )} */}
         </button>
-        <h1 className="text-xl font-semibold text-black">Shipment Detail</h1>
       </div>
 
       <div className="flex items-center gap-3 mb-6">
@@ -265,13 +282,13 @@ const ActiveShipmentDetail = () => {
             />
             {shipment.images.length > 1 && (
               <>
-                <button 
+                <button
                   onClick={prevImage}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50"
                 >
                   <ChevronLeft className="w-5 h-5 text-black" />
                 </button>
-                <button 
+                <button
                   onClick={nextImage}
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50"
                 >
@@ -289,7 +306,7 @@ const ActiveShipmentDetail = () => {
       {/* Basic Information */}
       <div className="bg-white rounded-lg p-6 mb-6">
         <h2 className="text-lg font-semibold text-black mb-4">Basic Information</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm text-gray-500 mb-1">Shipment title</p>
@@ -321,7 +338,7 @@ const ActiveShipmentDetail = () => {
       {/* Pickup & Delivery Details */}
       <div className="bg-white rounded-lg p-6 mb-6">
         <h2 className="text-lg font-semibold text-black mb-4">Pickup & Delivery Details</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm text-gray-500 mb-1">Pickup Address</p>
@@ -395,7 +412,7 @@ const ActiveShipmentDetail = () => {
               <p className="text-black font-medium">{vehicle.year || 'N/A'}</p>
             </div>
           </div>
-          
+
           {/* Vehicle Images */}
           {vehicle.images && vehicle.images.length > 0 && (
             <div className="mt-4">
