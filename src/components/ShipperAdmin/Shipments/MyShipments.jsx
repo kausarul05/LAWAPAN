@@ -671,7 +671,7 @@ const MyShipments = () => {
 
     // Load shipments on component mount and when page changes
     useEffect(() => {
-        fetchShipments(currentPage, searchTerm);
+        fetchShipments(currentPage, '');
     }, [currentPage]);
 
     // Handle search with debounce

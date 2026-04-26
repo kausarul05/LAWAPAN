@@ -4,7 +4,8 @@
 // UPDATED: Added Bid endpoints
 // ============================================
 
-const API_BASE_URL = "https://server.lawapantruck.com/api/v1";
+// const API_BASE_URL = "https://server.lawapantruck.com/api/v1";
+const API_BASE_URL = "https://logistics-shipment-management-backend.onrender.com/api/v1";
 
 export const API_ENDPOINTS = {
   // Authentication Endpoints

@@ -93,7 +93,7 @@ export default function ProfilePage() {
         shipper_name: formData.fullName
       };
       
-      console.log('📝 Updating profile for ID:', shipperId, updateData);
+      console.log('Updating profile for ID:', shipperId, updateData);
       
       const response = await updateShipperProfile();
       
