@@ -1,8 +1,39 @@
 "use client";
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Upload, FileText, Briefcase, MapPin, File } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  CheckCircle2, 
+  AlertCircle, 
+  Upload, 
+  FileText, 
+  Briefcase, 
+  MapPin, 
+  File,
+  Building2,
+  Truck,
+  Shield,
+  UserCircle,
+  Building,
+  ScrollText,
+  ClipboardCheck,
+  UserCog,
+  ShoppingCart,
+  Settings,
+  Users,
+  HardDrive,
+  Package,
+  Globe,
+  Mail,
+  Phone,
+  Calendar,
+  Clock,
+  DollarSign,
+  CreditCard,
+  Banknote,
+  HelpCircle
+} from 'lucide-react';
 import { completeTransporterProfile } from './lib/profileApiClient';
-
 
 export default function CompleteTransporterProfile() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -25,23 +56,25 @@ export default function CompleteTransporterProfile() {
   const brand = '#036BB4';
 
   const roleOptions = [
-    { display: 'Logistic Manager', value: 'Logistick_manager' },
-    { display: 'Purchasing Manager', value: 'Purchasing_manager' },
-    { display: 'Operations Manager', value: 'Operations_Manager' },
-    { display: 'Buyer', value: 'Buyer' },
-    { display: 'Freight Forwarder', value: 'Freight_Forwarder' },
-    { display: 'Secretariat', value: 'Secretariat' },
-    { display: 'Other', value: 'Other' }
+    { display: 'Logistic Manager', value: 'Logistick_manager', icon: UserCog },
+    { display: 'Purchasing Manager', value: 'Purchasing_manager', icon: ShoppingCart },
+    { display: 'Operations Manager', value: 'Operations_Manager', icon: Settings },
+    { display: 'Buyer', value: 'Buyer', icon: Users },
+    { display: 'Freight Forwarder', value: 'Freight_Forwarder', icon: Package },
+    { display: 'Secretariat', value: 'Secretariat', icon: Building },
+    { display: 'Other', value: 'Other', icon: HelpCircle }
   ];
 
-  const stepIcons = [Briefcase, MapPin, File, FileText, FileText];
+  const stepIcons = [Briefcase, MapPin, FileText, FileText, FileText];
 
   const stepConfigurations = [
     {
       step: 1,
       title: "What is your role in the company?",
+      subtitle: "Select your position",
       field: 'role',
-      type: 'options'
+      type: 'options',
+      icon: UserCircle
     },
     {
       step: 2,
@@ -49,7 +82,8 @@ export default function CompleteTransporterProfile() {
       subtitle: "Basic Information",
       field: 'companyAddress',
       type: 'text',
-      placeholder: 'Enter your full company address'
+      placeholder: 'Enter your full company address',
+      icon: Building2
     },
     {
       step: 3,
@@ -57,7 +91,8 @@ export default function CompleteTransporterProfile() {
       subtitle: "Documentation",
       field: 'registrationCertificate',
       type: 'file',
-      label: 'Company Registration Certificate'
+      label: 'Company Registration Certificate',
+      icon: ScrollText
     },
     {
       step: 4,
@@ -65,7 +100,8 @@ export default function CompleteTransporterProfile() {
       subtitle: "Documentation",
       field: 'transportLicense',
       type: 'file',
-      label: 'Transport License'
+      label: 'Transport License',
+      icon: ClipboardCheck
     },
     {
       step: 5,
@@ -73,7 +109,8 @@ export default function CompleteTransporterProfile() {
       subtitle: "Documentation",
       field: 'insuranceCertificate',
       type: 'file',
-      label: 'Insurance Certificate'
+      label: 'Insurance Certificate',
+      icon: Shield
     }
   ];
 
@@ -183,7 +220,6 @@ export default function CompleteTransporterProfile() {
       
       let errorMsg = error.message || 'Error completing profile. Please try again.';
       
-      // Better error message handling
       if (errorMsg.includes('Authentication failed')) {
         errorMsg = 'Authentication failed. Please sign up again and try completing your profile immediately.';
       } else if (errorMsg.includes('User ID not found')) {
@@ -202,22 +238,27 @@ export default function CompleteTransporterProfile() {
     if (currentConfig.type === 'options') {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {roleOptions.map(roleOption => (
-            <button
-              key={roleOption.value}
-              onClick={() => handleOptionSelect(roleOption.value)}
-              className="p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium hover:scale-105"
-              style={{
-                borderColor: profileData.role === roleOption.value ? brand : '#e5e7eb',
-                background: profileData.role === roleOption.value ? '#e8f4fd' : '#fff',
-                boxShadow: profileData.role === roleOption.value ? `0 4px 12px ${brand}25` : 'none',
-              }}
-            >
-              <span style={{ color: profileData.role === roleOption.value ? brand : '#4b5563' }}>
-                {roleOption.display}
-              </span>
-            </button>
-          ))}
+          {roleOptions.map(roleOption => {
+            const RoleIcon = roleOption.icon;
+            const isSelected = profileData.role === roleOption.value;
+            return (
+              <button
+                key={roleOption.value}
+                onClick={() => handleOptionSelect(roleOption.value)}
+                className="p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium hover:scale-105 flex items-center gap-3"
+                style={{
+                  borderColor: isSelected ? brand : '#e5e7eb',
+                  background: isSelected ? '#e8f4fd' : '#fff',
+                  boxShadow: isSelected ? `0 4px 12px ${brand}25` : 'none',
+                }}
+              >
+                <RoleIcon className="w-5 h-5 flex-shrink-0" style={{ color: isSelected ? brand : '#6b7280' }} />
+                <span style={{ color: isSelected ? brand : '#4b5563' }}>
+                  {roleOption.display}
+                </span>
+              </button>
+            );
+          })}
         </div>
       );
     }
@@ -226,19 +267,25 @@ export default function CompleteTransporterProfile() {
       return (
         <div className="space-y-4">
           {currentConfig.subtitle && (
-            <p className="text-sm font-semibold text-gray-600">{currentConfig.subtitle}</p>
+            <p className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+              <currentConfig.icon className="w-4 h-4" style={{ color: brand }} />
+              {currentConfig.subtitle}
+            </p>
           )}
           <label className="block text-sm font-semibold text-gray-700">Company Address</label>
-          <input
-            type="text"
-            value={profileData[currentConfig.field]}
-            onChange={handleInputChange}
-            placeholder={currentConfig.placeholder}
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-900 transition-colors focus:outline-none"
-            style={{ borderColor: errors[currentConfig.field] ? '#ef4444' : '#d1d5db' }}
-            onFocus={e => !errors[currentConfig.field] && (e.target.style.borderColor = brand)}
-            onBlur={e => !errors[currentConfig.field] && (e.target.style.borderColor = '#d1d5db')}
-          />
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={profileData[currentConfig.field]}
+              onChange={handleInputChange}
+              placeholder={currentConfig.placeholder}
+              className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-300 text-gray-900 transition-colors focus:outline-none"
+              style={{ borderColor: errors[currentConfig.field] ? '#ef4444' : '#d1d5db' }}
+              onFocus={e => !errors[currentConfig.field] && (e.target.style.borderColor = brand)}
+              onBlur={e => !errors[currentConfig.field] && (e.target.style.borderColor = '#d1d5db')}
+            />
+          </div>
         </div>
       );
     }
@@ -251,10 +298,16 @@ export default function CompleteTransporterProfile() {
       return (
         <div className="space-y-6">
           {currentConfig.subtitle && (
-            <p className="text-sm font-semibold text-gray-600">{currentConfig.subtitle}</p>
+            <p className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+              <currentConfig.icon className="w-4 h-4" style={{ color: brand }} />
+              {currentConfig.subtitle}
+            </p>
           )}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-4">{currentConfig.label}</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+              <FileText className="w-4 h-4" style={{ color: brand }} />
+              {currentConfig.label}
+            </label>
             <div className="relative">
               <input
                 type="file"
@@ -326,7 +379,7 @@ export default function CompleteTransporterProfile() {
           <img 
             src="/login-logo (2).png" 
             alt="LAWANPAN TRUCK" 
-            className="w-30 mx-auto mb-8 " 
+            className="w-30 mx-auto mb-8" 
           />
           <h1 className="text-4xl font-bold text-gray-900 mb-3">Complete Your Profile</h1>
           <p className="text-lg text-gray-600">Step {currentStep} of {totalSteps}</p>
@@ -360,6 +413,10 @@ export default function CompleteTransporterProfile() {
                     <p className="text-xs text-gray-500 mt-1">{Math.round((currentStep / totalSteps) * 100)}% Complete</p>
                   </div>
                 </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-xs text-gray-500">Required</span>
+                </div>
               </div>
 
               {/* Messages */}
@@ -379,7 +436,11 @@ export default function CompleteTransporterProfile() {
 
               {/* Step Content */}
               <div className="mb-10">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">{currentConfig.title} <span className='text-red-500 ml-1 font-bold'>*</span></h2>
+                <div className="flex items-center gap-2 mb-6">
+                  <currentConfig.icon className="w-6 h-6" style={{ color: brand }} />
+                  <h2 className="text-2xl font-bold text-gray-900">{currentConfig.title}</h2>
+                  <span className="text-red-500 font-bold ml-1">*</span>
+                </div>
                 {renderStepContent()}
 
                 {errors[currentConfig.field] && (
@@ -429,7 +490,8 @@ export default function CompleteTransporterProfile() {
 
           {/* Footer */}
           <div className="mt-8 text-center">
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
+              <Shield className="w-4 h-4" />
               Your documents are secure and will be reviewed by our team
             </p>
           </div>

@@ -1,8 +1,36 @@
 "use client";
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, Package, Truck, MapPin, Users, DollarSign, Briefcase } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  CheckCircle2, 
+  AlertCircle, 
+  Package, 
+  Truck, 
+  MapPin, 
+  Users, 
+  DollarSign, 
+  Briefcase,
+  Building2,
+  Globe,
+  TrendingUp,
+  Boxes,
+  HardDrive,
+  Building,
+  UserCircle,
+  UserCog,
+  ShoppingCart,
+  Settings,
+  ClipboardList,
+  Scale,
+  Ship,
+  Plane,
+  Train,
+  Fuel,
+  Warehouse,
+  Shield
+} from 'lucide-react';
 import { completeShipperProfile } from './lib/profileApiClient';
-
 
 export default function CompleteShipperProfile() {
     const [currentStep, setCurrentStep] = useState(1);
@@ -28,112 +56,149 @@ export default function CompleteShipperProfile() {
     const totalSteps = 8;
     const brand = '#036BB4';
 
-    const stepIcons = [Users, Truck, DollarSign, Package, MapPin, Truck, Briefcase, MapPin];
+    const stepIcons = [Users, TrendingUp, DollarSign, Package, Globe, Truck, Briefcase, MapPin];
+
+    // Role options with icons
+    const roleOptions = [
+        { value: 'Logistic_Manager', label: 'Logistic\nManager', icon: UserCog },
+        { value: 'Purchasing_Manager', label: 'Purchasing\nManager', icon: ShoppingCart },
+        { value: 'Operations_Manager', label: 'Operations\nManager', icon: Settings },
+        { value: 'Buyer', label: 'Buyer', icon: UserCircle },
+        { value: 'Freight_Forwarder', label: 'Freight\nForwarder', icon: Ship },
+        { value: 'Secretariat', label: 'Secretariat', icon: Building },
+        { value: 'Other', label: 'Other', icon: ClipboardList },
+    ];
+
+    // Type of shipment options with icons
+    const typeOfShipmentOptions = [
+        { value: 'Food_Commodities', label: 'Food\nCommodities', icon: Package },
+        { value: 'Building_Materials', label: 'Building\nMaterials', icon: Building2 },
+        { value: 'Various_Goods', label: 'Various\nGoods', icon: Boxes },
+        { value: 'Mining', label: 'Mining', icon: HardDrive },
+        { value: 'Specialized_Machines', label: 'Specialized\nMachines', icon: Settings },
+        { value: 'Others', label: 'Others', icon: Package },
+    ];
+
+    // Shipping range options with icons
+    const shippingRangeOptions = [
+        { value: 'Regional', label: 'Regional', icon: MapPin },
+        { value: 'National', label: 'National', icon: MapPin },
+        { value: 'International', label: 'International', icon: Globe },
+    ];
+
+    // Ship type options with icons
+    const shipTypeOptions = [
+        { value: 'Partial_Trucks', label: 'Partial Trucks\n(LTL)', icon: Truck },
+        { value: 'Complete_Trucks', label: 'Complete Trucks\n(FTL)', icon: Truck },
+    ];
+
+    // Employee size options
+    const employeeOptions = [
+        { value: '1-5', label: '1 to 5\nemployees' },
+        { value: '6-20', label: '6 to 20\nemployees' },
+        { value: '21-50', label: '21 to 50\nemployees' },
+        { value: '51-200', label: '51 to 200\nemployees' },
+        { value: '201-500', label: '201 to 500\nemployees' },
+        { value: '500+', label: 'More than\n500 employees' },
+    ];
+
+    // Shipments per month options
+    const shipmentsOptions = [
+        { value: '0-5', label: '0 to 5' },
+        { value: '6-10', label: '6 to 10' },
+        { value: '11-50', label: '11 to 50' },
+        { value: '50-200', label: '50 to 200' },
+        { value: '200+', label: 'More than 200' },
+    ];
+
+    // Monthly budget options
+    const budgetOptions = [
+        { value: '0-2500', label: 'Less than 2,500' },
+        { value: '2500-10000', label: '2,500 - 10,000' },
+        { value: '10000-50000', label: '10,000 - 50,000' },
+        { value: '50000+', label: 'More than 50,000' },
+    ];
 
     const stepConfigurations = [
         {
             step: 1,
             title: "What is the size of your company?",
+            subtitle: "Select your company size",
             field: 'employeeSize',
             type: 'grid',
             columns: 3,
-            options: [
-                { value: '1-5', label: '1 to 5\nemployees' },
-                { value: '6-20', label: '6 to 20\nemployees' },
-                { value: '21-50', label: '21 to 50\nemployees' },
-                { value: '51-200', label: '51 to 200\nemployees' },
-                { value: '201-500', label: '201 to 500\nemployees' },
-                { value: '500+', label: 'More than\n500 employees' },
-            ]
+            icon: Users,
+            options: employeeOptions
         },
         {
             step: 2,
             title: "How many shipments per month?",
+            subtitle: "Select average monthly shipments",
             field: 'shipmentsPerMonth',
             type: 'grid',
             columns: 3,
-            options: [
-                { value: '0-5', label: '0 to 5' },
-                { value: '6-10', label: '6 to 10' },
-                { value: '11-50', label: '11 to 50' },
-                { value: '50-200', label: '50 to 200' },
-                { value: '200+', label: 'More than 200' },
-            ]
+            icon: TrendingUp,
+            options: shipmentsOptions
         },
         {
             step: 3,
             title: "What is your monthly shipping budget?",
+            subtitle: "Select your budget range",
             field: 'monthlyBudget',
             type: 'grid',
             columns: 2,
-            options: [
-                { value: '0-2500', label: 'Less than 2,500' },
-                { value: '2500-10000', label: '2,500 - 10,000' },
-                { value: '10000-50000', label: '10,000 - 50,000' },
-                { value: '50000+', label: 'More than 50,000' },
-            ]
+            icon: DollarSign,
+            options: budgetOptions
         },
         {
             step: 4,
             title: "What type of merchandise do you ship?",
+            subtitle: "Select your merchandise type",
             field: 'typeOfShipment',
             type: 'grid',
             columns: 3,
-            options: [
-                { value: 'Food_Commodities', label: 'Food\nCommodities' },
-                { value: 'Building_Materials', label: 'Building\nMaterials' },
-                { value: 'Various_Goods', label: 'Various\nGoods' },
-                { value: 'Mining', label: 'Mining' },
-                { value: 'Specialized_Machines', label: 'Specialized\nMachines' },
-                { value: 'Others', label: 'Others' },
-            ]
+            icon: Package,
+            options: typeOfShipmentOptions
         },
         {
             step: 5,
             title: "What is your shipping range?",
+            subtitle: "Select your shipping area",
             field: 'shippingMerchandiseAt',
             type: 'grid',
             columns: 3,
-            options: [
-                { value: 'Regional', label: 'Regional' },
-                { value: 'National', label: 'National' },
-                { value: 'International', label: 'International' },
-            ]
+            icon: Globe,
+            options: shippingRangeOptions
         },
         {
             step: 6,
             title: "What type of shipments do you need?",
+            subtitle: "Select your preferred shipment type",
             field: 'shipType',
             type: 'grid',
             columns: 2,
-            options: [
-                { value: 'Partial_Trucks', label: 'Partial Trucks\n(LTL)' },
-                { value: 'Complete_Trucks', label: 'Complete Trucks\n(FTL)' },
-            ]
+            icon: Truck,
+            options: shipTypeOptions
         },
         {
             step: 7,
             title: "What is your role in the company?",
+            subtitle: "Select your position",
             field: 'shipperType',
             type: 'grid',
             columns: 2,
-            options: [
-                { value: 'Logistic_Manager', label: 'Logistic\nManager' },
-                { value: 'Purchasing_Manager', label: 'Purchasing\nManager' },
-                { value: 'Operations_Manager', label: 'Operations\nManager' },
-                { value: 'Buyer', label: 'Buyer' },
-                { value: 'Freight_Forwarder', label: 'Freight\nForwarder' },
-                { value: 'Secretariat', label: 'Secretariat' },
-                { value: 'Other', label: 'Other' },
-            ]
+            icon: Briefcase,
+            options: roleOptions
         },
         {
             step: 8,
             title: "Enter your company address",
+            subtitle: "Location Information",
             field: 'companyAddress',
             type: 'text',
             label: 'Company Address',
-            placeholder: 'Enter house number, street, city (e.g., 123 Main Street, Dakar)'
+            placeholder: 'Enter house number, street, city (e.g., 123 Main Street, Dakar)',
+            icon: MapPin
         }
     ];
 
@@ -225,6 +290,67 @@ export default function CompleteShipperProfile() {
         }
     };
 
+    const renderGridOptions = (options, columns) => {
+        return (
+            <div className={`grid grid-cols-1 gap-4 ${columns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+                {options.map(option => {
+                    const isSelected = profileData[currentConfig.field] === option.value;
+                    const OptionIcon = option.icon;
+                    
+                    return (
+                        <button
+                            key={option.value}
+                            onClick={() => handleOptionSelect(option.value)}
+                            className="p-4 rounded-xl border-2 transition-all duration-200 text-center font-medium whitespace-pre-line hover:scale-105 flex flex-col items-center justify-center gap-2"
+                            style={{
+                                borderColor: isSelected ? brand : '#e5e7eb',
+                                background: isSelected ? '#e8f4fd' : '#fff',
+                                boxShadow: isSelected ? `0 4px 12px ${brand}25` : 'none',
+                                color: isSelected ? brand : '#4b5563',
+                            }}
+                        >
+                            {OptionIcon && <OptionIcon className="w-6 h-6" style={{ color: isSelected ? brand : '#9ca3af' }} />}
+                            <span>{option.label}</span>
+                        </button>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const renderStepContent = () => {
+        if (currentConfig.type === 'grid') {
+            return renderGridOptions(currentConfig.options, currentConfig.columns);
+        }
+
+        if (currentConfig.type === 'text') {
+            return (
+                <div className="space-y-4">
+                    {currentConfig.subtitle && (
+                        <p className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+                            <currentConfig.icon className="w-4 h-4" style={{ color: brand }} />
+                            {currentConfig.subtitle}
+                        </p>
+                    )}
+                    <label className="block text-sm font-semibold text-gray-700">Company Address</label>
+                    <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                            type="text"
+                            value={profileData[currentConfig.field]}
+                            onChange={handleInputChange}
+                            placeholder={currentConfig.placeholder}
+                            className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-300 text-gray-900 transition-colors focus:outline-none"
+                            style={{ borderColor: errors[currentConfig.field] ? '#ef4444' : '#d1d5db' }}
+                            onFocus={e => !errors[currentConfig.field] && (e.target.style.borderColor = brand)}
+                            onBlur={e => !errors[currentConfig.field] && (e.target.style.borderColor = '#d1d5db')}
+                        />
+                    </div>
+                </div>
+            );
+        }
+    };
+
     return (
         <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #e8f4fd 0%, #ffffff 50%, #e8f4fd 100%)' }}>
             {/* Loading Overlay */}
@@ -287,6 +413,10 @@ export default function CompleteShipperProfile() {
                                         <p className="text-xs text-gray-500 mt-1">{Math.round((currentStep / totalSteps) * 100)}% Complete</p>
                                     </div>
                                 </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                    <span className="text-xs text-gray-500">Required</span>
+                                </div>
                             </div>
 
                             {/* Messages */}
@@ -318,45 +448,15 @@ export default function CompleteShipperProfile() {
 
                             {/* Step Content */}
                             <div className="mb-10">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-8">{currentConfig.title} <span className='text-red-500 ml-1 font-bold'>*</span></h2>
-
-                                {currentConfig.type === 'grid' ? (
-                                    <div className={`grid grid-cols-1 gap-4 ${currentConfig.columns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'
-                                        }`}>
-                                        {currentConfig.options.map(option => {
-                                            const isSelected = profileData[currentConfig.field] === option.value;
-                                            return (
-                                                <button
-                                                    key={option.value}
-                                                    onClick={() => handleOptionSelect(option.value)}
-                                                    className="p-4 rounded-xl border-2 transition-all duration-200 text-center font-medium whitespace-pre-line hover:scale-105"
-                                                    style={{
-                                                        borderColor: isSelected ? brand : '#e5e7eb',
-                                                        background: isSelected ? '#e8f4fd' : '#fff',
-                                                        boxShadow: isSelected ? `0 4px 12px ${brand}25` : 'none',
-                                                        color: isSelected ? brand : '#4b5563',
-                                                    }}
-                                                >
-                                                    {option.label}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4">
-                                        <label className="block text-sm font-semibold text-gray-700">{currentConfig.label}</label>
-                                        <input
-                                            type="text"
-                                            value={profileData[currentConfig.field]}
-                                            onChange={handleInputChange}
-                                            placeholder={currentConfig.placeholder}
-                                            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-900 transition-colors focus:outline-none"
-                                            style={{ borderColor: errors[currentConfig.field] ? '#ef4444' : '#d1d5db' }}
-                                            onFocus={e => !errors[currentConfig.field] && (e.target.style.borderColor = brand)}
-                                            onBlur={e => !errors[currentConfig.field] && (e.target.style.borderColor = '#d1d5db')}
-                                        />
-                                    </div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <currentConfig.icon className="w-6 h-6" style={{ color: brand }} />
+                                    <h2 className="text-2xl font-bold text-gray-900">{currentConfig.title}</h2>
+                                    <span className="text-red-500 font-bold ml-1">*</span>
+                                </div>
+                                {currentConfig.subtitle && (
+                                    <p className="text-sm text-gray-500 mb-6">{currentConfig.subtitle}</p>
                                 )}
+                                {renderStepContent()}
 
                                 {errors[currentConfig.field] && (
                                     <div className="mt-4 p-3 rounded-lg bg-red-50 flex items-center gap-2">
@@ -405,7 +505,8 @@ export default function CompleteShipperProfile() {
 
                     {/* Footer */}
                     <div className="mt-8 text-center">
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
+                            <Shield className="w-4 h-4" />
                             Your information is secure and encrypted
                         </p>
                     </div>

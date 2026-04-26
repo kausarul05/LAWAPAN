@@ -35,7 +35,23 @@ export default function SignUpForm() {
     { id: 'trailer', label: 'Trailer (43)', value: 'TRAILER', count: 43, icon: Package },
   ];
 
-  const countries = ['Benin', 'Nigeria', 'Ghana', 'Togo', 'Ivory Coast'];
+  const countries = [
+    'Burkina Faso',
+    'Niger',
+    'Mali',
+    "Côte d'Ivoire",
+    'Togo',
+    'Benin',
+    'Ghana',
+    'Senegal',
+    'Mauritania',
+    'Guinea-Bissau',
+    'Guinea',
+    'Sierra Leone',
+    'Liberia',
+    'Gambia',
+    'Nigeria'
+  ];
 
   const handleRoleChange = (selectedRole) => {
     setRole(selectedRole);

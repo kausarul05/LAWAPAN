@@ -14,6 +14,7 @@ import {
     Loader
 } from "lucide-react";
 import { getAvailableBids, getShipmentDetails, placeBid, getTransporterDrivers, getTransporterVehicles } from "../../../../../components/lib/apiClient";
+import { toast } from "react-toastify";
 
 // Helper function to replace localhost URLs with server URL
 const replaceImageUrl = (url) => {
@@ -223,11 +224,12 @@ const BidDetailPage = () => {
             const response = await placeBid(bidData);
             
             console.log('✅ Bid response:', response);
+            console.log('✅ Bid response status:', response?.success);
             
-            if (response.success) {
+            if (response?.success) {
                 toast.success('Bid placed successfully!');
                 setShowAssignModal(false);
-                router.push(`/dashboard/Transporter/my-bids`);
+                // router.push(`/dashboard/Transporter/my-bids`);
             } else {
                 throw new Error(response.message || 'Failed to place bid');
             }
@@ -569,12 +571,12 @@ const BidDetailPage = () => {
                                 />
                             </div>
 
-                            <div className="bg-gray-50 p-4 rounded-lg">
+                            {/* <div className="bg-gray-50 p-4 rounded-lg">
                                 <p className="text-sm text-gray-600 mb-1">Current Price</p>
                                 <p className="text-lg font-bold text-gray-900">
                                     ${formatPrice(shipment.price)}
                                 </p>
-                            </div>
+                            </div> */}
 
                             <button
                                 onClick={handleContinueToAssign}
